@@ -1,27 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 92" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 92" role="img" aria-labelledby="title desc">
   <title id="title">AIV — Anish Industrial Ventures</title>
-  <desc id="desc">White AIV wordmark with an orange upward arrow and full company name.</desc>
+  <desc id="desc">White AIV wordmark with orange arrow on the V and full company name.</desc>
 
   <g fill="none" fill-rule="evenodd">
+    <!-- AIV mark -->
     <path fill="#FFFFFF" d="M10 72 48 15h18l38 57H82l-8-13H39l-8 13H10Zm39-29h16l-8-13-8 13Zm63-28h20v57h-20V15Zm35 0h22l20 36 20-36h22l-34 57h-16l-34-57Z"/>
 
-    <path fill="#FF6B00" d="m184 15 30-9-9 30-6-10-15 15-8-8 15-15-7-3Z"/>
+    <!-- orange arrow moved onto the V tip -->
+    <path fill="#FF6B00" transform="translate(-12,2)" d="m184 15 30-9-9 30-6-10-15 15-8-8 15-15-7-3Z"/>
 
-    <text x="255" y="34"
+    <!-- full name -->
+    <text x="228" y="33"
           fill="#FFFFFF"
           font-family="Arial, Helvetica, sans-serif"
-          font-size="15"
-          font-weight="700"
-          letter-spacing="0.7">
+          font-size="18"
+          font-weight="800"
+          letter-spacing="0.8">
       ANISH INDUSTRIAL
     </text>
 
-    <text x="255" y="56"
+    <text x="228" y="57"
           fill="#DCE4EE"
           font-family="Arial, Helvetica, sans-serif"
-          font-size="15"
-          font-weight="700"
-          letter-spacing="1.1">
+          font-size="18"
+          font-weight="800"
+          letter-spacing="1.6">
       VENTURES
     </text>
   </g>

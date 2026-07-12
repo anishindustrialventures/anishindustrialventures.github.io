@@ -1,71 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 1200 760"
-     role="img"
-     aria-labelledby="title desc">
-  <title id="title">AIV — Anish Industrial Ventures</title>
-  <desc id="desc">Geometric white AIV logo with an orange upward arrow, company name, and the tagline Powering What's Next.</desc>
-
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550" width="1000" height="550">
   <defs>
-    <linearGradient id="whiteMetal" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#FFFFFF"/>
-      <stop offset="100%" stop-color="#E7EDF4"/>
+    <linearGradient id="vGrad" x1="615" y1="260" x2="770" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="75%" stop-color="#f25e02"/>
+      <stop offset="100%" stop-color="#ff7b1c"/>
     </linearGradient>
-
-    <linearGradient id="orangeArrow" x1="0" y1="1" x2="1" y2="0">
-      <stop offset="0%" stop-color="#FF5A00"/>
-      <stop offset="100%" stop-color="#FF8A00"/>
-    </linearGradient>
+    
+    <style>
+      .subtext {
+        font-family: 'Montserrat', 'Proxima Nova', 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 700;
+        font-size: 34px;
+        fill: #ffffff;
+        letter-spacing: 6.5px;
+      }
+      .tagline {
+        font-family: 'Montserrat', 'Proxima Nova', 'Helvetica Neue', Arial, sans-serif;
+        font-weight: 600;
+        font-size: 17px;
+        fill: #f25e02;
+        letter-spacing: 3.5px;
+      }
+    </style>
   </defs>
 
-  <!-- Transparent background: designed for a dark navy website header -->
-  <g transform="translate(86 70)">
-    <!-- A -->
-    <path fill="url(#whiteMetal)"
-          d="M0 360 L150 40 H245 L395 360 H300 L265 280 H130 L95 360 Z
-             M165 200 H230 L198 125 Z"/>
+  <g transform="translate(35, 20)">
+    <polygon points="160,260 280,70 400,260 330,260 267.5,161 205,260" fill="#ffffff" />
+    
+    <polygon points="241.6,210 288.4,210 301.1,230 229.0,230" fill="#f25e02" />
 
-    <!-- Orange crossbar inside A -->
-    <path fill="url(#orangeArrow)"
-          d="M142 246 H253 L266 274 H129 Z"/>
+    <rect x="435" y="100" width="45" height="160" fill="#ffffff" />
 
-    <!-- I -->
-    <path fill="url(#whiteMetal)"
-          d="M420 40 H515 V360 H420 Z"/>
+    <polygon points="625,260 590,260 490,100 535,100 615,228" fill="#ffffff" />
 
-    <!-- V -->
-    <path fill="url(#whiteMetal)"
-          d="M540 40 H640 L745 255 L826 90 H923 L778 360 H700 Z"/>
+    <path d="M 615 260 
+             L 640 260 
+             L 737 105 
+             L 759 119 
+             L 770 30 
+             L 682 71 
+             L 705 85 
+             L 615 228 Z" 
+          fill="url(#vGrad)" />
+  </g>
 
-    <!-- Integrated upward arrow on the tip/right stroke of V -->
-    <path fill="url(#orangeArrow)"
-          d="M792 168 L850 50 L821 42 L918 0 L902 104 L878 74 L824 188 Z"/>
+  <text x="503" y="385" text-anchor="middle" class="subtext">ANISH INDUSTRIAL VENTURES</text>
 
-    <!-- Company name -->
-    <text x="500" y="485"
-          text-anchor="middle"
-          fill="#FFFFFF"
-          font-family="Arial, Helvetica, sans-serif"
-          font-size="47"
-          font-weight="700"
-          letter-spacing="2.4">
-      ANISH INDUSTRIAL VENTURES
-    </text>
-
-    <!-- Tagline and side rules -->
-    <line x1="18" y1="565" x2="145" y2="565"
-          stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
-
-    <text x="500" y="582"
-          text-anchor="middle"
-          fill="#FF6B00"
-          font-family="Arial, Helvetica, sans-serif"
-          font-size="37"
-          font-weight="700"
-          letter-spacing="7">
-      POWERING WHAT’S NEXT.
-    </text>
-
-    <line x1="855" y1="565" x2="982" y2="565"
-          stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+  <g transform="translate(0, 440)">
+    <line x1="190" y1="-5" x2="295" y2="-5" stroke="#f25e02" stroke-width="2" />
+    
+    <text x="502" y="0" text-anchor="middle" class="tagline">POWERING WHAT'S NEXT.</text>
+    
+    <line x1="710" y1="-5" x2="815" y2="-5" stroke="#f25e02" stroke-width="2" />
   </g>
 </svg>

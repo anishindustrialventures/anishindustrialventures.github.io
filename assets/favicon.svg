@@ -1,5 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#061B34"/>
-  <path d="M9 45 25 17h9l16 28H39l-3-6H23l-3 6H9Zm18-14h5l-3-5-2 5Z" fill="#fff"/>
-  <path d="m38 14 17-5-5 17-4-6-8 8-5-5 8-8-3-1Z" fill="#FF6B00"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="140 -180 650 650" width="100%" height="100%">
+  <defs>
+    <!-- Gradient for the 'V' arrow, transitioning from white at the base to vibrant orange at the tip -->
+    <linearGradient id="vGrad" x1="615" y1="260" x2="770" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="30%" stop-color="#ffffff"/>
+      <stop offset="75%" stop-color="#f25e02"/>
+      <stop offset="100%" stop-color="#ff7b1c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Deep navy square background for the favicon -->
+  <rect x="140" y="-180" width="650" height="650" fill="#06101e" />
+
+  <!-- Main 'AIV' Logo Mark (Precisely centered) -->
+  <g>
+    <!-- 'A' Outer and Inner Shape -->
+    <polygon points="160,260 280,70 400,260 330,260 267.5,161 205,260" fill="#ffffff" />
+    
+    <!-- 'A' Orange Crossbar -->
+    <polygon points="241.6,210 288.4,210 301.1,230 229.0,230" fill="#f25e02" />
+
+    <!-- 'I' Vertical Bar -->
+    <rect x="435" y="100" width="45" height="160" fill="#ffffff" />
+
+    <!-- 'V' Left Leg -->
+    <polygon points="625,260 590,260 490,100 535,100 615,228" fill="#ffffff" />
+
+    <!-- 'V' Right Leg and Arrow -->
+    <path d="M 615 260 
+             L 640 260 
+             L 737 105 
+             L 759 119 
+             L 770 30 
+             L 682 71 
+             L 705 85 
+             L 615 228 Z" 
+          fill="url(#vGrad)" />
+  </g>
 </svg>

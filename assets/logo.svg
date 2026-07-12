@@ -1,31 +1,71 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 92" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1200 760"
+     role="img"
+     aria-labelledby="title desc">
   <title id="title">AIV — Anish Industrial Ventures</title>
-  <desc id="desc">White AIV wordmark with orange arrow on the V and full company name.</desc>
+  <desc id="desc">Geometric white AIV logo with an orange upward arrow, company name, and the tagline Powering What's Next.</desc>
 
-  <g fill="none" fill-rule="evenodd">
-    <!-- AIV mark -->
-    <path fill="#FFFFFF" d="M10 72 48 15h18l38 57H82l-8-13H39l-8 13H10Zm39-29h16l-8-13-8 13Zm63-28h20v57h-20V15Zm35 0h22l20 36 20-36h22l-34 57h-16l-34-57Z"/>
+  <defs>
+    <linearGradient id="whiteMetal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#E7EDF4"/>
+    </linearGradient>
 
-    <!-- orange arrow moved onto the V tip -->
-    <path fill="#FF6B00" transform="translate(-12,2)" d="m184 15 30-9-9 30-6-10-15 15-8-8 15-15-7-3Z"/>
+    <linearGradient id="orangeArrow" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FF5A00"/>
+      <stop offset="100%" stop-color="#FF8A00"/>
+    </linearGradient>
+  </defs>
 
-    <!-- full name -->
-    <text x="228" y="33"
+  <!-- Transparent background: designed for a dark navy website header -->
+  <g transform="translate(86 70)">
+    <!-- A -->
+    <path fill="url(#whiteMetal)"
+          d="M0 360 L150 40 H245 L395 360 H300 L265 280 H130 L95 360 Z
+             M165 200 H230 L198 125 Z"/>
+
+    <!-- Orange crossbar inside A -->
+    <path fill="url(#orangeArrow)"
+          d="M142 246 H253 L266 274 H129 Z"/>
+
+    <!-- I -->
+    <path fill="url(#whiteMetal)"
+          d="M420 40 H515 V360 H420 Z"/>
+
+    <!-- V -->
+    <path fill="url(#whiteMetal)"
+          d="M540 40 H640 L745 255 L826 90 H923 L778 360 H700 Z"/>
+
+    <!-- Integrated upward arrow on the tip/right stroke of V -->
+    <path fill="url(#orangeArrow)"
+          d="M792 168 L850 50 L821 42 L918 0 L902 104 L878 74 L824 188 Z"/>
+
+    <!-- Company name -->
+    <text x="500" y="485"
+          text-anchor="middle"
           fill="#FFFFFF"
           font-family="Arial, Helvetica, sans-serif"
-          font-size="18"
-          font-weight="800"
-          letter-spacing="0.8">
-      ANISH INDUSTRIAL
+          font-size="47"
+          font-weight="700"
+          letter-spacing="2.4">
+      ANISH INDUSTRIAL VENTURES
     </text>
 
-    <text x="228" y="57"
-          fill="#DCE4EE"
+    <!-- Tagline and side rules -->
+    <line x1="18" y1="565" x2="145" y2="565"
+          stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
+
+    <text x="500" y="582"
+          text-anchor="middle"
+          fill="#FF6B00"
           font-family="Arial, Helvetica, sans-serif"
-          font-size="18"
-          font-weight="800"
-          letter-spacing="1.6">
-      VENTURES
+          font-size="37"
+          font-weight="700"
+          letter-spacing="7">
+      POWERING WHAT’S NEXT.
     </text>
+
+    <line x1="855" y1="565" x2="982" y2="565"
+          stroke="#FF6B00" stroke-width="6" stroke-linecap="round"/>
   </g>
 </svg>

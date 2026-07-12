@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 360" role="img" aria-labelledby="title desc">
+  <title id="title">Bank QR code placeholder</title>
+  <desc id="desc">Replace this image with the official AIV bank payment QR code before launch.</desc>
+  <rect width="360" height="360" rx="28" fill="#fff"/>
+  <rect x="18" y="18" width="324" height="324" rx="20" fill="none" stroke="#061B34" stroke-width="8" stroke-dasharray="16 12"/>
+  <g fill="#061B34">
+    <rect x="52" y="52" width="86" height="86" rx="8"/>
+    <rect x="222" y="52" width="86" height="86" rx="8"/>
+    <rect x="52" y="222" width="86" height="86" rx="8"/>
+    <rect x="160" y="160" width="32" height="32" rx="4"/>
+    <rect x="208" y="160" width="28" height="28" rx="4"/>
+    <rect x="160" y="208" width="28" height="28" rx="4"/>
+    <rect x="208" y="208" width="40" height="40" rx="4"/>
+    <rect x="264" y="160" width="28" height="76" rx="4"/>
+    <rect x="160" y="264" width="76" height="28" rx="4"/>
+    <rect x="264" y="264" width="28" height="28" rx="4"/>
+  </g>
+  <g fill="#fff">
+    <rect x="70" y="70" width="50" height="50" rx="4"/>
+    <rect x="240" y="70" width="50" height="50" rx="4"/>
+    <rect x="70" y="240" width="50" height="50" rx="4"/>
+  </g>
+  <rect x="78" y="78" width="34" height="34" rx="3" fill="#FF6B00"/>
+  <rect x="248" y="78" width="34" height="34" rx="3" fill="#FF6B00"/>
+  <rect x="78" y="248" width="34" height="34" rx="3" fill="#FF6B00"/>
+  <rect x="78" y="152" width="204" height="56" rx="12" fill="#fff" stroke="#E2E8F0" stroke-width="4"/>
+  <text x="180" y="177" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#061B34">BANK QR</text>
+  <text x="180" y="197" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#607086">PLACEHOLDER</text>
+</svg>

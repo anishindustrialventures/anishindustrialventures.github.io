@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Place a Brand Daddy Fireball order with Anish Industrial Ventures.">
+  <meta name="theme-color" content="#061B34">
+  <title>Place Order | AIV</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/site-config.js" defer></script>
+  <script src="js/common.js" defer></script>
+  <script src="js/order.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="index.html" aria-label="Anish Industrial Ventures home"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"></a>
+      <nav class="desktop-nav" aria-label="Primary navigation"><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></nav>
+      <a class="button button--primary header-cta" href="order.html" aria-current="page">Place order</a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open navigation" data-menu-toggle><span></span></button>
+    </div>
+    <nav class="mobile-menu" aria-label="Mobile navigation" data-mobile-menu><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a><a class="button button--primary" href="order.html">Place order</a></nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container page-hero__inner">
+        <div>
+          <div class="breadcrumbs"><a href="index.html">Home</a><span>/</span><a href="product.html">Brand Daddy Fireball</a><span>/</span><span>Place order</span></div>
+          <span class="eyebrow">Secure order request</span>
+          <h1>Build your Fireball order.</h1>
+          <p>Select any combination of the 24-piece, 40-piece and 50-piece sets. The total is calculated automatically at ₹650 per fireball, inclusive of GST.</p>
+        </div>
+        <div class="product-hero-image"><img src="assets/brand-daddy-fireball.png" alt="Brand Daddy Fireball" width="776" height="548"></div>
+      </div>
+    </section>
+
+    <section class="section section--alt">
+      <div class="container order-layout">
+        <div>
+          <form class="order-panel" id="customer-form" novalidate>
+            <div class="form-section">
+              <div class="form-section__title"><span>1</span><h2>Select pack quantities</h2></div>
+              <p><strong data-order-product-name>Brand Daddy Fireball</strong> · <span data-unit-price>₹650</span> per fireball, GST included.</p>
+              <div class="order-pack-list" data-order-packs></div>
+            </div>
+
+            <div class="form-section">
+              <div class="form-section__title"><span>2</span><h2>Customer and business details</h2></div>
+              <div class="form-grid">
+                <div class="field"><label for="business-name">Business / customer name <span>*</span></label><input id="business-name" name="businessName" autocomplete="organization" required maxlength="120"></div>
+                <div class="field"><label for="contact-person">Contact person <span>*</span></label><input id="contact-person" name="contactPerson" autocomplete="name" required maxlength="100"></div>
+                <div class="field"><label for="phone">Mobile number <span>*</span></label><input id="phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10-digit Indian mobile number" required maxlength="14"></div>
+                <div class="field"><label for="email">Email address</label><input id="email" name="email" type="email" autocomplete="email" maxlength="160"></div>
+                <div class="field"><label for="gstin">GSTIN <span>*</span></label><input id="gstin" name="gstin" autocomplete="off" placeholder="15-character GSTIN" required maxlength="15" style="text-transform:uppercase"><small>The customer GSTIN will be used for invoicing.</small></div>
+                <div class="field"><label for="state">State <span>*</span></label><input id="state" name="state" autocomplete="address-level1" required maxlength="80"></div>
+                <div class="field field--full"><label for="billing-address">Billing address <span>*</span></label><textarea id="billing-address" name="billingAddress" autocomplete="billing street-address" required maxlength="500"></textarea></div>
+                <div class="field field--full"><label for="delivery-address">Delivery address <span>*</span></label><textarea id="delivery-address" name="deliveryAddress" autocomplete="shipping street-address" required maxlength="500"></textarea></div>
+                <div class="field"><label for="pincode">Delivery PIN code <span>*</span></label><input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6"></div>
+                <div class="field"><label for="purchase-order">Purchase order reference</label><input id="purchase-order" name="purchaseOrderReference" maxlength="100"></div>
+                <div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" name="notes" maxlength="600" placeholder="Any delivery or invoicing instructions"></textarea></div>
+                <label class="checkbox-field field--full"><input type="checkbox" name="accuracyConfirmed" required><span>I confirm that the order and customer details entered above are accurate.</span></label>
+              </div>
+              <div class="button-row" style="margin-top:24px"><button class="button button--primary" type="submit">Review total and payment details <span aria-hidden="true">→</span></button></div>
+            </div>
+          </form>
+
+          <section class="order-panel payment-step" data-payment-step hidden>
+            <div class="form-section__title"><span>3</span><h2>Payment and order submission</h2></div>
+            <div class="payment-setup-banner" data-payment-setup-banner hidden><strong>Setup pending:</strong> Official bank details, GSTIN and the bank QR code are currently shown as placeholders. Payment submission is disabled until they are added in <code>js/site-config.js</code>.</div>
+
+            <div class="review-box">
+              <div class="review-box__header"><span>Order reference</span><strong data-order-id>AIV-XXXXXXXX</strong></div>
+              <div data-review-items></div>
+              <div class="review-line"><span>Total pieces</span><strong data-total-pieces>0</strong></div>
+              <div class="review-line"><span>Taxable value</span><strong data-taxable-value>₹0</strong></div>
+              <div class="review-line"><span>GST</span><strong data-gst-value>₹0</strong></div>
+              <div class="review-line"><span>Total payable</span><strong data-order-total>₹0</strong></div>
+            </div>
+
+            <p data-payment-instructions>Use the generated AIV Order ID in the payment remarks. Your order will be confirmed after payment verification.</p>
+            <div class="bank-grid">
+              <div class="bank-details">
+                <div class="bank-row"><span>Account name</span><strong data-bank-account-name>XXXXXXXXXXXXXXX</strong></div>
+                <div class="bank-row"><span>Bank name</span><strong data-bank-name>XXXXXXXXXXXXXXX</strong></div>
+                <div class="bank-row"><span>Account number</span><strong data-bank-account-number>XXXXXXXXXXXXXXX</strong></div>
+                <div class="bank-row"><span>IFSC</span><strong data-bank-ifsc>XXXXXXXXXXX</strong></div>
+                <div class="bank-row"><span>Branch</span><strong data-bank-branch>XXXXXXXXXXXXXXX</strong></div>
+                <div class="bank-row"><span>UPI ID</span><strong data-upi-id>XXXXXXXXXXXXXXX</strong></div>
+              </div>
+              <div class="bank-qr"><img src="assets/bank-qr-placeholder.svg" alt="Bank QR code placeholder" width="360" height="360" data-bank-qr><span>Replace with official bank QR before launch</span></div>
+            </div>
+
+            <form id="payment-form" novalidate>
+              <div class="form-grid">
+                <div class="field"><label for="payer-name">Payer / account name <span>*</span></label><input id="payer-name" name="payerName" required maxlength="120"></div>
+                <div class="field"><label for="payment-date">Payment date <span>*</span></label><input id="payment-date" name="paymentDate" type="date" required></div>
+                <div class="field"><label for="utr">UTR / transaction reference <span>*</span></label><input id="utr" name="utr" required maxlength="80"></div>
+                <div class="field"><label for="payment-screenshot">Payment screenshot <span>*</span></label><input id="payment-screenshot" name="paymentScreenshot" type="file" accept="image/*" required><small>Maximum file size: 5 MB.</small></div>
+                <label class="checkbox-field field--full"><input type="checkbox" name="verificationConsent" required><span>I understand that the order is confirmed only after AIV verifies the payment.</span></label>
+              </div>
+              <div class="button-row" style="margin-top:24px"><button class="button button--primary" type="submit" data-submit-payment>Submit payment details</button></div>
+            </form>
+
+            <div class="status-message" data-order-status hidden></div>
+            <div class="success-panel" data-success-panel hidden><h3>Order received</h3><p>Order <strong data-success-order-id></strong> has been recorded with the status <strong>Payment verification pending</strong>.</p><a class="button button--outline" href="#" target="_blank" rel="noopener" data-success-whatsapp>Share on WhatsApp</a></div>
+          </section>
+        </div>
+
+        <aside class="order-summary" aria-label="Order summary">
+          <div class="order-summary__header"><h2>Live order summary</h2><p>Mixed packs are allowed.</p></div>
+          <div class="order-summary__body">
+            <div class="order-summary__row"><span>Total pieces</span><strong data-total-pieces>0</strong></div>
+            <div class="order-summary__row"><span>Price per fireball</span><strong data-unit-price>₹650</strong></div>
+            <div class="order-summary__row"><span>Taxable value</span><strong data-taxable-value>₹0</strong></div>
+            <div class="order-summary__row"><span>GST included</span><strong data-gst-value>₹0</strong></div>
+            <div class="order-summary__row order-summary__total"><span>Total payable</span><strong data-order-total>₹0</strong></div>
+            <p style="margin:20px 0 0;color:var(--muted);font-size:.82rem">Delivery charges, if any, should be configured before the payment flow is activated.</p>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p></div>
+      <div class="footer-column"><h3>Quick links</h3><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></div>
+      <div class="footer-column"><h3>Our products</h3><a href="product.html">Brand Daddy Fireball</a><span>More products coming soon</span></div>
+      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 3h4l2 5-3 2c2 4 4 6 8 8l2-3 5 2v4c0 1-1 2-2 2C10 23 1 14 1 4c0-1 1-1 3-1Z"/></svg><a href="index.html#contact" data-phone-link data-phone>+91 XXXXX XXXXX</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg><a href="index.html#contact" data-email-link data-email>XXXXXXXX@XXXXXXXX.com</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s7-6 7-13a7 7 0 1 0-14 0c0 7 7 13 7 13Z"/><circle cx="12" cy="9" r="2"/></svg><span data-address>Punjab, India</span></div></div>
+      <div class="footer-column"><h3>Follow us</h3><a class="whatsapp-icon" href="index.html#contact" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
+    </div>
+    <div class="container footer-bottom">© <span data-year></span> <span data-company-name>Anish Industrial Ventures</span>. All rights reserved.</div>
+  </footer>
+</body>
+</html>

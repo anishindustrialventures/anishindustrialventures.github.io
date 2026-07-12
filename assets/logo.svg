@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 92" role="img" aria-labelledby="title desc">
+  <title id="title">AIV — Anish Industrial Ventures</title>
+  <desc id="desc">White AIV wordmark with an orange upward arrow.</desc>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#FFFFFF" d="M10 72 48 15h18l38 57H82l-8-13H39l-8 13H10Zm39-29h16l-8-13-8 13Zm63-28h20v57h-20V15Zm35 0h22l20 36 20-36h22l-34 57h-16l-34-57Z"/>
+    <path fill="#FF6B00" d="m184 15 30-9-9 30-6-10-15 15-8-8 15-15-7-3Z"/>
+    <path fill="#FFFFFF" d="M245 22h4l10 22h-5l-2-5h-10l-2 5h-5l10-22Zm5 13-3-8-3 8h6Zm13-13h5l11 14V22h5v22h-4l-12-15v15h-5V22Zm27 0h5v22h-5V22Zm10 19 3-4c2 2 5 3 8 3 2 0 4-1 4-2 0-2-1-2-6-3-5-2-8-3-8-7 0-4 4-7 9-7 4 0 7 1 10 3l-3 4c-2-2-5-3-7-3s-3 1-3 2c0 2 1 2 6 4 5 1 8 3 8 6 0 5-4 7-10 7-4 0-8-1-11-3Zm26-19h5v9h9v-9h5v22h-5v-9h-9v9h-5V22Z"/>
+    <path fill="#DCE4EE" d="M245 55h5v22h-5V55Zm11 0h5l11 14V55h5v22h-4l-12-15v15h-5V55Zm27 0h9c7 0 12 5 12 11s-5 11-12 11h-9V55Zm9 18c4 0 7-3 7-7s-3-7-7-7h-4v14h4Zm17-5V55h5v13c0 4 2 5 5 5s5-1 5-5V55h5v13c0 7-4 10-10 10s-10-3-10-10Zm24 6 3-4c2 2 5 3 8 3 2 0 4-1 4-2 0-2-1-2-6-3-5-2-8-3-8-7 0-4 4-7 9-7 4 0 7 1 10 3l-3 4c-2-2-5-3-7-3s-3 1-3 2c0 2 1 2 6 4 5 1 8 3 8 6 0 5-4 7-10 7-4 0-8-1-11-3Zm29-15h-7v-4h19v4h-7v18h-5V59Zm17-4h10c3 0 6 1 7 3 2 1 2 3 2 6 0 3-2 6-5 7l6 8h-6l-5-7h-4v7h-5V55Zm10 13c3 0 4-2 4-4s-1-4-4-4h-5v8h5Zm15-13h5v22h-5V55Zm21 0h4l10 22h-5l-2-5h-10l-2 5h-5l10-22Zm5 13-3-8-3 8h6Zm13-13h5v18h11v4h-16V55Z"/>
+  </g>
+</svg>

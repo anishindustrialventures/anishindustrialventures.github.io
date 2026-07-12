@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550" width="1000" height="550">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550" preserveAspectRatio="xMidYMid meet">
   <defs>
     <linearGradient id="vGrad" x1="615" y1="260" x2="770" y2="30" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#ffffff"/>
@@ -11,47 +11,36 @@
       .subtext {
         font-family: 'Montserrat', 'Proxima Nova', 'Helvetica Neue', Arial, sans-serif;
         font-weight: 700;
-        font-size: 34px;
+        font-size: 42px; /* Increased for readability */
         fill: #ffffff;
-        letter-spacing: 6.5px;
+        letter-spacing: 4px;
       }
       .tagline {
         font-family: 'Montserrat', 'Proxima Nova', 'Helvetica Neue', Arial, sans-serif;
         font-weight: 600;
-        font-size: 17px;
+        font-size: 28px; /* Increased for readability */
         fill: #f25e02;
-        letter-spacing: 3.5px;
+        letter-spacing: 2px;
       }
     </style>
   </defs>
 
+  <!-- Main 'AIV' Logo Mark -->
   <g transform="translate(35, 20)">
     <polygon points="160,260 280,70 400,260 330,260 267.5,161 205,260" fill="#ffffff" />
-    
     <polygon points="241.6,210 288.4,210 301.1,230 229.0,230" fill="#f25e02" />
-
     <rect x="435" y="100" width="45" height="160" fill="#ffffff" />
-
     <polygon points="625,260 590,260 490,100 535,100 615,228" fill="#ffffff" />
-
-    <path d="M 615 260 
-             L 640 260 
-             L 737 105 
-             L 759 119 
-             L 770 30 
-             L 682 71 
-             L 705 85 
-             L 615 228 Z" 
-          fill="url(#vGrad)" />
+    <path d="M 615 260 L 640 260 L 737 105 L 759 119 L 770 30 L 682 71 L 705 85 L 615 228 Z" fill="url(#vGrad)" />
   </g>
 
-  <text x="503" y="385" text-anchor="middle" class="subtext">ANISH INDUSTRIAL VENTURES</text>
+  <!-- Subtext -->
+  <text x="500" y="385" text-anchor="middle" class="subtext">ANISH INDUSTRIAL VENTURES</text>
 
+  <!-- Tagline -->
   <g transform="translate(0, 440)">
-    <line x1="190" y1="-5" x2="295" y2="-5" stroke="#f25e02" stroke-width="2" />
-    
-    <text x="502" y="0" text-anchor="middle" class="tagline">POWERING WHAT'S NEXT.</text>
-    
-    <line x1="710" y1="-5" x2="815" y2="-5" stroke="#f25e02" stroke-width="2" />
+    <line x1="150" y1="-10" x2="300" y2="-10" stroke="#f25e02" stroke-width="3" />
+    <text x="500" y="0" text-anchor="middle" class="tagline">POWERING WHAT'S NEXT.</text>
+    <line x1="700" y1="-10" x2="850" y2="-10" stroke="#f25e02" stroke-width="3" />
   </g>
 </svg>

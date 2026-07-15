@@ -17,6 +17,7 @@
     document.querySelectorAll("[data-product-summary]").forEach((element) => (element.textContent = product.summary));
     document.querySelectorAll("[data-product-description]").forEach((element) => (element.textContent = product.description));
     document.querySelectorAll("[data-product-price]").forEach((element) => (element.textContent = helpers.formatMoney(product.pricePerUnit)));
+    document.querySelectorAll("[data-product-mrp]").forEach((element) => (element.textContent = helpers.formatMoney(product.mrpPerUnit)));
 
     document.querySelectorAll("[data-product-image]").forEach((image) => {
       image.src = product.heroImage || product.image;
@@ -36,7 +37,7 @@
         <span class="pack-card__count">${pack.pieces}</span>
         <div>
           <h3>${pack.label}</h3>
-          <p>${helpers.formatMoney(total)} per set</p>
+          <p>${helpers.formatMoney(total)} per bundle · GST and shipping included</p>
         </div>
       `;
       packs.appendChild(card);
@@ -55,32 +56,5 @@
       item.innerHTML = `<span>${index + 1}</span><p>${step}</p>`;
       usage.appendChild(item);
     });
-
-    const videos = document.querySelector("[data-videos]");
-    if (!product.videos.length) {
-      videos.innerHTML = `
-        <article class="video-placeholder">
-          <div class="video-placeholder__play" aria-hidden="true">▶</div>
-          <div>
-            <span class="eyebrow">Video section</span>
-            <h3>Product videos coming soon</h3>
-            <p>Demonstrations and usage videos can be added here later using YouTube embeds.</p>
-          </div>
-        </article>
-      `;
-    } else {
-      product.videos.forEach((video) => {
-        if (video.type !== "youtube" || !video.videoId) return;
-        const article = document.createElement("article");
-        article.className = "video-card";
-        article.innerHTML = `
-          <div class="video-frame">
-            <iframe src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(video.videoId)}" title="${video.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-          <h3>${video.title}</h3>
-        `;
-        videos.appendChild(article);
-      });
-    }
   });
 })();

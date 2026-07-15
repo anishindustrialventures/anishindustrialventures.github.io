@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Brand Daddy Fireball product details, available pack sizes and ordering information from Anish Industrial Ventures.">
+  <meta name="description" content="Brand Daddy Fireball product details and ordering information from Anish Industrial Ventures.">
   <meta name="theme-color" content="#061B34">
   <title>Brand Daddy Fireball | AIV</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -41,7 +41,7 @@
           </div>
           <div class="button-row">
             <a class="button button--primary" href="order.html" data-order-link>Place order <span aria-hidden="true">→</span></a>
-            <a class="button button--light" href="index.html#contact" data-whatsapp-link>WhatsApp enquiry</a>
+            <a class="button button--light" href="#" data-whatsapp-link>WhatsApp enquiry</a>
           </div>
         </div>
         <div class="product-hero-image"><img src="assets/brand-daddy-fireball.png" alt="Brand Daddy Fireball" width="776" height="548" data-product-image></div>
@@ -54,7 +54,11 @@
           <span class="eyebrow">Product overview</span>
           <h2>Simple. Reliable. Ready for bulk orders.</h2>
           <p data-product-description></p>
-          <p><strong>Price:</strong> <span data-product-price>₹650</span> per fireball, inclusive of GST.</p>
+          <div class="detail-price">
+            <span>MRP <del data-product-mrp>₹999</del> per ball</span>
+            <strong><span data-product-price>₹603</span> per ball</strong>
+            <small>Inclusive of 18% GST and shipping</small>
+          </div>
         </article>
         <article class="detail-card">
           <span class="eyebrow">Key benefits</span>
@@ -67,10 +71,10 @@
     <section class="section section--alt">
       <div class="container">
         <div class="section-heading">
-          <div><span class="eyebrow">Available SKUs</span><h2>Choose one or mix multiple sets.</h2></div>
-          <p>Customers can order any number of the defined sets. Mixed-SKU orders are fully supported.</p>
+          <div><span class="eyebrow">Order quantity</span><h2>Available in bundles of 36.</h2></div>
+          <p>Each bundle contains 36 Fireballs. Order one or more complete bundles according to your requirement.</p>
         </div>
-        <div class="pack-grid" data-pack-list></div>
+        <div class="pack-grid pack-grid--single" data-pack-list></div>
       </div>
     </section>
 
@@ -85,40 +89,30 @@
           <span class="eyebrow">Order process</span>
           <h2>From selection to confirmation</h2>
           <ol class="usage-list">
-            <li><span>1</span><p>Select the 24-piece, 40-piece or 50-piece sets and enter the number of sets required.</p></li>
+            <li><span>1</span><p>Select the number of 36-ball bundles required.</p></li>
             <li><span>2</span><p>Provide business, contact, GSTIN, billing and delivery details.</p></li>
-            <li><span>3</span><p>Review the total, pay to the displayed bank account and submit the UTR and payment screenshot.</p></li>
-            <li><span>4</span><p>The order status remains “payment verification pending” until AIV confirms receipt.</p></li>
+            <li><span>3</span><p>Review the total and the official AIV bank-account details.</p></li>
+            <li><span>4</span><p>Confirm the order to generate the AIV Order Reference and record it for processing.</p></li>
           </ol>
         </article>
       </div>
     </section>
 
-    <section class="section section--alt">
-      <div class="container">
-        <div class="section-heading">
-          <div><span class="eyebrow">Product videos</span><h2>See the product in action.</h2></div>
-          <p>The page already includes a future-ready video area. YouTube demonstrations can be added through one configuration file.</p>
-        </div>
-        <div class="video-grid" data-videos></div>
-      </div>
-    </section>
-
     <section class="section">
       <div class="container product-cta">
-        <div><h2>Ready to order Brand Daddy Fireball?</h2><p>Build a mixed order using any number of the available sets.</p></div>
-        <div class="button-row"><a class="button button--primary" href="order.html" data-order-link>Start order</a><a class="button button--light" href="index.html#contact" data-whatsapp-link>Ask on WhatsApp</a></div>
+        <div><h2>Ready to order Brand Daddy Fireball?</h2><p>One bundle contains 36 Fireballs and costs ₹21,708, with GST and shipping included.</p></div>
+        <div class="button-row"><a class="button button--primary" href="order.html" data-order-link>Start order</a><a class="button button--light" href="#" data-whatsapp-link>Ask on WhatsApp</a></div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="container footer-grid">
-      <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p></div>
+    <div class="container footer-grid footer-grid--business">
+      <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p><p class="footer-legal">Proprietor: <span data-proprietor-name>Sunita Gupta</span></p></div>
       <div class="footer-column"><h3>Quick links</h3><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></div>
-      <div class="footer-column"><h3>Our products</h3><a href="product.html">Brand Daddy Fireball</a><span>More products coming soon</span></div>
-      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 3h4l2 5-3 2c2 4 4 6 8 8l2-3 5 2v4c0 1-1 2-2 2C10 23 1 14 1 4c0-1 1-1 3-1Z"/></svg><a href="index.html#contact" data-phone-link data-phone>+91 XXXXX XXXXX</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg><a href="index.html#contact" data-email-link data-email>XXXXXXXX@XXXXXXXX.com</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s7-6 7-13a7 7 0 1 0-14 0c0 7 7 13 7 13Z"/><circle cx="12" cy="9" r="2"/></svg><span data-address>Punjab, India</span></div></div>
-      <div class="footer-column"><h3>Follow us</h3><a class="whatsapp-icon" href="index.html#contact" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
+      <div class="footer-column"><h3>Business registration</h3><span>GSTIN: <strong data-gstin>03AGRPG5512C1ZV</strong></span><span>Udyam: <strong data-udyam>UDYAM-PB-19-0073269</strong></span><span>Regular proprietorship</span></div>
+      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 3h4l2 5-3 2c2 4 4 6 8 8l2-3 5 2v4c0 1-1 2-2 2C10 23 1 14 1 4c0-1 1-1 3-1Z"/></svg><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s7-6 7-13a7 7 0 1 0-14 0c0 7 7 13 7 13Z"/><circle cx="12" cy="9" r="2"/></svg><span data-address></span></div></div>
+      <div class="footer-column"><h3>WhatsApp</h3><a class="whatsapp-icon" href="#" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
     </div>
     <div class="container footer-bottom">© <span data-year></span> <span data-company-name>Anish Industrial Ventures</span>. All rights reserved.</div>
   </footer>

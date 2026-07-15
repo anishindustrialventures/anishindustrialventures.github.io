@@ -1,24 +1,39 @@
 /**
- * AIV Free Order Receiver — Google Apps Script
+ * AIV Order Receiver
  *
- * 1. Create a Google Sheet and copy its spreadsheet ID.
- * 2. Optionally create a Google Drive folder for payment screenshots.
- * 3. Replace the three constants below.
- * 4. Deploy as a Web App: execute as yourself and allow anyone with the link.
- * 5. Paste the Web App URL into js/site-config.js -> order.endpoint.
+ * Deploy this script as a Web App:
+ * - Execute as: Me
+ * - Who has access: Anyone
+ * Then paste the /exec URL into js/site-config.js -> order.endpoint.
  */
 const AIV_SETTINGS = {
-  SPREADSHEET_ID: 'PASTE_GOOGLE_SHEET_ID_HERE',
+  SPREADSHEET_ID: '15VuBQcjwtp0-GXhf6Y9s_Zpl7s8hZ0IBDF3hYlGwCIM',
   SHEET_NAME: 'Orders',
-  SCREENSHOT_FOLDER_ID: 'PASTE_DRIVE_FOLDER_ID_HERE',
-  NOTIFICATION_EMAIL: 'PASTE_OWNER_EMAIL_HERE'
+  NOTIFICATION_EMAIL: 'anishindustrialventures@gmail.com',
+  SELLER_GSTIN: '03AGRPG5512C1ZV',
+  SELLER_UDYAM: 'UDYAM-PB-19-0073269',
+  PRODUCT_ID: 'brand-daddy-fireball',
+  PRODUCT_NAME: 'Brand Daddy Fireball',
+  BUNDLE_SIZE: 36,
+  UNIT_PRICE: 603,
+  UNIT_MRP: 999,
+  GST_RATE: 0.18
 };
 
 const HEADERS = [
   'Submitted At',
-  'Order ID',
+  'Order Reference',
   'Status',
-  'Business Name',
+  'Product',
+  'Bundle Quantity',
+  'Balls per Bundle',
+  'Total Fireballs',
+  'MRP per Fireball',
+  'Selling Price per Fireball',
+  'GST',
+  'Shipping',
+  'Total Payable',
+  'Business / Customer Name',
   'Contact Person',
   'Phone',
   'Email',
@@ -29,88 +44,100 @@ const HEADERS = [
   'PIN Code',
   'Purchase Order Reference',
   'Order Notes',
-  'Line Items',
-  'Total Sets',
-  'Total Pieces',
-  'Taxable Value',
-  'GST',
-  'Total Inclusive of GST',
-  'Payer Name',
-  'Payment Date',
-  'UTR / Transaction Reference',
-  'Screenshot URL',
   'Seller GSTIN',
+  'Seller Udyam',
+  'Request Token',
   'Payload Version'
 ];
 
 function doGet() {
-  return jsonResponse_({ ok: true, service: 'AIV order receiver' });
+  return ContentService
+    .createTextOutput('AIV order receiver is active.')
+    .setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
+  let requestToken = '';
 
   try {
-    if (!e || !e.postData || !e.postData.contents) {
-      throw new Error('Empty request body.');
-    }
+    const rawPayload = e && e.parameter ? e.parameter.payload : '';
+    if (!rawPayload) throw new Error('Order details were not received.');
 
-    const payload = JSON.parse(e.postData.contents);
+    const payload = JSON.parse(rawPayload);
+    requestToken = safeCell_(payload.requestToken);
     validatePayload_(payload);
 
     const spreadsheet = SpreadsheetApp.openById(AIV_SETTINGS.SPREADSHEET_ID);
     const sheet = getOrCreateSheet_(spreadsheet);
 
-    if (orderExists_(sheet, payload.orderId)) {
-      return jsonResponse_({ ok: true, duplicate: true, orderId: payload.orderId });
+    const duplicate = findByRequestToken_(sheet, payload.requestToken);
+    if (duplicate) {
+      return htmlResponse_({
+        ok: true,
+        source: 'aiv-order-receiver',
+        requestToken: payload.requestToken,
+        orderId: duplicate.orderId,
+        total: duplicate.total,
+        duplicate: true
+      });
     }
 
-    const screenshotUrl = saveScreenshot_(payload);
-    const items = Array.isArray(payload.lineItems) ? payload.lineItems : [];
-    const totalSets = items.reduce((sum, item) => sum + Number(item.sets || 0), 0);
-    const lineItemText = items
-      .map((item) => `${item.label}: ${item.sets} set(s), ${item.pieces} piece(s), ₹${Number(item.amount || 0).toFixed(2)}`)
-      .join(' | ');
-
+    const bundleQuantity = Number(payload.bundleQuantity);
+    const totalPieces = bundleQuantity * AIV_SETTINGS.BUNDLE_SIZE;
+    const totalPayable = totalPieces * AIV_SETTINGS.UNIT_PRICE;
+    const orderId = generateOrderId_();
     const customer = payload.customer || {};
-    const totals = payload.totals || {};
-    const payment = payload.payment || {};
 
     sheet.appendRow([
-      payload.submittedAt || new Date().toISOString(),
-      safeCell_(payload.orderId),
-      safeCell_(payload.status || 'PAYMENT_VERIFICATION_PENDING'),
+      new Date(),
+      orderId,
+      'ORDER_RECEIVED_PAYMENT_PENDING',
+      AIV_SETTINGS.PRODUCT_NAME,
+      bundleQuantity,
+      AIV_SETTINGS.BUNDLE_SIZE,
+      totalPieces,
+      AIV_SETTINGS.UNIT_MRP,
+      AIV_SETTINGS.UNIT_PRICE,
+      '18% included',
+      'Included',
+      totalPayable,
       safeCell_(customer.businessName),
       safeCell_(customer.contactPerson),
       safeCell_(customer.phone),
       safeCell_(customer.email),
-      safeCell_(customer.gstin),
+      safeCell_(String(customer.gstin || '').toUpperCase()),
       safeCell_(customer.state),
       safeCell_(customer.billingAddress),
       safeCell_(customer.deliveryAddress),
       safeCell_(customer.pincode),
       safeCell_(customer.purchaseOrderReference),
       safeCell_(customer.notes),
-      safeCell_(lineItemText),
-      totalSets,
-      Number(totals.pieces || 0),
-      Number(totals.taxable || 0),
-      Number(totals.gst || 0),
-      Number(totals.inclusiveTotal || 0),
-      safeCell_(payment.payerName),
-      safeCell_(payment.paymentDate),
-      safeCell_(payment.utr),
-      screenshotUrl,
-      safeCell_(payload.sellerGstin),
-      Number(payload.version || 1)
+      AIV_SETTINGS.SELLER_GSTIN,
+      AIV_SETTINGS.SELLER_UDYAM,
+      safeCell_(payload.requestToken),
+      Number(payload.version || 2)
     ]);
 
-    sendNotification_(payload, screenshotUrl);
-    return jsonResponse_({ ok: true, orderId: payload.orderId });
+    formatLastRow_(sheet);
+    sendNotification_(orderId, payload, totalPieces, totalPayable);
+
+    return htmlResponse_({
+      ok: true,
+      source: 'aiv-order-receiver',
+      requestToken: payload.requestToken,
+      orderId: orderId,
+      total: totalPayable
+    });
   } catch (error) {
     console.error(error);
-    return jsonResponse_({ ok: false, error: error.message });
+    return htmlResponse_({
+      ok: false,
+      source: 'aiv-order-receiver',
+      requestToken: requestToken,
+      error: error.message || 'The order could not be recorded.'
+    });
   } finally {
     lock.releaseLock();
   }
@@ -123,86 +150,121 @@ function getOrCreateSheet_(spreadsheet) {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADERS);
     sheet.setFrozenRows(1);
-    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, HEADERS.length)
+      .setFontWeight('bold')
+      .setBackground('#061B34')
+      .setFontColor('#FFFFFF');
+    sheet.autoResizeColumns(1, HEADERS.length);
   }
   return sheet;
 }
 
-function orderExists_(sheet, orderId) {
+function findByRequestToken_(sheet, requestToken) {
   const lastRow = sheet.getLastRow();
-  if (lastRow < 2) return false;
-  const values = sheet.getRange(2, 2, lastRow - 1, 1).getDisplayValues().flat();
-  return values.includes(String(orderId));
+  if (lastRow < 2 || !requestToken) return null;
+  const tokenColumn = HEADERS.indexOf('Request Token') + 1;
+  const orderColumn = HEADERS.indexOf('Order Reference') + 1;
+  const totalColumn = HEADERS.indexOf('Total Payable') + 1;
+  const tokens = sheet.getRange(2, tokenColumn, lastRow - 1, 1).getDisplayValues();
+
+  for (let index = 0; index < tokens.length; index += 1) {
+    if (tokens[index][0] === String(requestToken)) {
+      const row = index + 2;
+      return {
+        orderId: sheet.getRange(row, orderColumn).getDisplayValue(),
+        total: Number(sheet.getRange(row, totalColumn).getValue())
+      };
+    }
+  }
+  return null;
 }
 
-function saveScreenshot_(payload) {
-  const screenshot = payload.paymentScreenshot;
-  if (!screenshot || !screenshot.base64) return '';
-  if (!AIV_SETTINGS.SCREENSHOT_FOLDER_ID || AIV_SETTINGS.SCREENSHOT_FOLDER_ID.includes('PASTE_')) return '';
+function validatePayload_(payload) {
+  if (!payload || typeof payload !== 'object') throw new Error('Invalid order details.');
+  if (!payload.requestToken) throw new Error('Request token is missing.');
+  if (payload.productId !== AIV_SETTINGS.PRODUCT_ID) throw new Error('Invalid product selected.');
 
-  const bytes = Utilities.base64Decode(screenshot.base64);
-  const fileName = `${payload.orderId}-${String(screenshot.name || 'payment-proof').replace(/[^a-zA-Z0-9._-]/g, '_')}`;
-  const blob = Utilities.newBlob(bytes, screenshot.mimeType || 'image/jpeg', fileName);
-  const folder = DriveApp.getFolderById(AIV_SETTINGS.SCREENSHOT_FOLDER_ID);
-  return folder.createFile(blob).getUrl();
-}
+  const bundles = Number(payload.bundleQuantity);
+  if (!Number.isInteger(bundles) || bundles < 1 || bundles > 999) {
+    throw new Error('Bundle quantity must be between 1 and 999.');
+  }
 
-function sendNotification_(payload, screenshotUrl) {
-  const email = AIV_SETTINGS.NOTIFICATION_EMAIL;
-  if (!email || email.includes('PASTE_')) return;
-
-  const totals = payload.totals || {};
   const customer = payload.customer || {};
-  const payment = payload.payment || {};
-  const lines = (payload.lineItems || []).map((item) =>
-    `- ${item.label} × ${item.sets} = ${item.pieces} pieces (₹${Number(item.amount || 0).toFixed(2)})`
-  );
+  const required = ['businessName', 'contactPerson', 'phone', 'email', 'gstin', 'state', 'billingAddress', 'deliveryAddress', 'pincode'];
+  required.forEach((field) => {
+    if (!String(customer[field] || '').trim()) throw new Error(`Missing customer field: ${field}.`);
+  });
 
+  if (!/^[6-9][0-9]{9}$/.test(String(customer.phone).replace(/\D/g, ''))) {
+    throw new Error('Invalid Indian mobile number.');
+  }
+  if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(String(customer.gstin).trim().toUpperCase())) {
+    throw new Error('Invalid customer GSTIN.');
+  }
+  if (!/^[0-9]{6}$/.test(String(customer.pincode).trim())) {
+    throw new Error('Invalid delivery PIN code.');
+  }
+}
+
+function generateOrderId_() {
+  const timezone = Session.getScriptTimeZone() || 'Asia/Kolkata';
+  const date = Utilities.formatDate(new Date(), timezone, 'yyyyMMdd');
+  const suffix = Utilities.getUuid().replace(/-/g, '').slice(0, 6).toUpperCase();
+  return `AIV-${date}-${suffix}`;
+}
+
+function formatLastRow_(sheet) {
+  const row = sheet.getLastRow();
+  const totalColumn = HEADERS.indexOf('Total Payable') + 1;
+  const mrpColumn = HEADERS.indexOf('MRP per Fireball') + 1;
+  const priceColumn = HEADERS.indexOf('Selling Price per Fireball') + 1;
+  sheet.getRange(row, 1).setNumberFormat('dd-mmm-yyyy hh:mm:ss');
+  sheet.getRange(row, mrpColumn).setNumberFormat('₹#,##0.00');
+  sheet.getRange(row, priceColumn).setNumberFormat('₹#,##0.00');
+  sheet.getRange(row, totalColumn).setNumberFormat('₹#,##0.00');
+  sheet.setRowHeight(row, 34);
+}
+
+function sendNotification_(orderId, payload, totalPieces, totalPayable) {
+  const customer = payload.customer || {};
   const body = [
-    `New AIV order submitted: ${payload.orderId}`,
+    `New AIV order: ${orderId}`,
     '',
-    `Status: ${payload.status}`,
-    `Business: ${customer.businessName || ''}`,
-    `Contact: ${customer.contactPerson || ''} | ${customer.phone || ''}`,
-    `GSTIN: ${customer.gstin || ''}`,
+    `Product: ${AIV_SETTINGS.PRODUCT_NAME}`,
+    `Bundles: ${payload.bundleQuantity}`,
+    `Total Fireballs: ${totalPieces}`,
+    `Total payable: ₹${Number(totalPayable).toFixed(2)}`,
+    'GST: 18% included',
+    'Shipping: Included',
     '',
-    'Items:',
-    ...lines,
+    `Business / Customer: ${customer.businessName}`,
+    `Contact: ${customer.contactPerson}`,
+    `Phone: ${customer.phone}`,
+    `Email: ${customer.email}`,
+    `GSTIN: ${customer.gstin}`,
+    `Delivery address: ${customer.deliveryAddress}, ${customer.state} - ${customer.pincode}`,
     '',
-    `Total pieces: ${totals.pieces || 0}`,
-    `Total inclusive of GST: ₹${Number(totals.inclusiveTotal || 0).toFixed(2)}`,
-    `UTR: ${payment.utr || ''}`,
-    `Screenshot: ${screenshotUrl || 'Not saved'}`,
-    '',
-    'Verify the bank receipt before confirming the order.'
+    'Status: Order received; payment verification pending.'
   ].join('\n');
 
   MailApp.sendEmail({
-    to: email,
-    subject: `AIV Order ${payload.orderId} — Payment Verification Pending`,
+    to: AIV_SETTINGS.NOTIFICATION_EMAIL,
+    subject: `AIV Order ${orderId}`,
     body: body
   });
 }
 
-function validatePayload_(payload) {
-  if (!payload || typeof payload !== 'object') throw new Error('Invalid JSON payload.');
-  if (!payload.orderId) throw new Error('Order ID is required.');
-  if (!payload.customer || !payload.customer.businessName || !payload.customer.phone) {
-    throw new Error('Customer details are incomplete.');
-  }
-  if (!Array.isArray(payload.lineItems) || payload.lineItems.length === 0) {
-    throw new Error('At least one line item is required.');
-  }
-  if (!payload.payment || !payload.payment.utr) throw new Error('UTR is required.');
-}
-
 function safeCell_(value) {
-  const text = value == null ? '' : String(value);
+  const text = value == null ? '' : String(value).trim();
   return /^[=+\-@]/.test(text) ? `'${text}` : text;
 }
 
-function jsonResponse_(value) {
-  return ContentService
-    .createTextOutput(JSON.stringify(value))
-    .setMimeType(ContentService.MimeType.JSON);
+function htmlResponse_(result) {
+  const data = JSON.stringify(result).replace(/</g, '\\u003c');
+  const html = `<!doctype html><html><body><script>
+    window.parent.postMessage(${data}, '*');
+  <\/script></body></html>`;
+  return HtmlService
+    .createHtmlOutput(html)
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }

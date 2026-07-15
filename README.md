@@ -1,92 +1,52 @@
 # Anish Industrial Ventures Website
 
-A responsive, dependency-free website built for free GitHub Pages hosting.
-
-## Included pages
-
-- `index.html` — approved navy/orange AIV homepage
-- `product.html` — Brand Daddy Fireball details, pack sizes, benefits, usage and future video section
-- `order.html` — mixed-SKU ordering, GST-inclusive calculation, customer details, bank-payment flow and payment proof collection
-- `404.html` — GitHub Pages fallback
+Customer-facing website for **Anish Industrial Ventures (AIV)**, hosted through GitHub Pages.
 
 ## Current commercial setup
 
 - Product: Brand Daddy Fireball
-- Price: ₹650 per fireball, inclusive of GST
-- Packs: 24 pieces, 40 pieces and 50 pieces
-- Customers can mix packs and order any number of sets
-- Order status after submission: `Payment verification pending`
-- GSTIN, bank details, contact details and QR code currently use placeholders
-- Payment submission is intentionally disabled while `payment.live` is `false`
+- MRP: ₹999 per Fireball
+- Selling price: ₹603 per Fireball
+- Order unit: complete bundles of 36 Fireballs
+- Bundle total: ₹21,708
+- GST: 18% included
+- Shipping: included
+- Customer GSTIN: mandatory
 
-## One-file future updates
+## Official business details
 
-Most business changes are made in:
+- Trade name: Anish Industrial Ventures
+- Proprietor: Sunita Gupta
+- GSTIN: 03AGRPG5512C1ZV
+- Udyam Registration: UDYAM-PB-19-0073269
+- Email: anishindustrialventures@gmail.com
+- Phone / WhatsApp: +91 73075 12016
 
-`js/site-config.js`
+## Files
 
-Use that file to update:
+- `index.html` — homepage
+- `product.html` — Brand Daddy Fireball product page
+- `order.html` — customer ordering and confirmation flow
+- `js/site-config.js` — business, product, pricing, bank and endpoint configuration
+- `js/order.js` — order calculations and Google Sheets submission
+- `google-apps-script/Code.gs` — Apps Script receiver for the Orders sheet
 
-- GSTIN
-- phone, email and WhatsApp number
-- bank account and UPI details
-- bank QR image
-- price or pack sizes
-- new products
-- YouTube videos
-- Google Sheets order endpoint
+## Google Sheets order connection
 
-## Preview locally
+The Apps Script is configured for spreadsheet ID:
 
-From the project folder, run:
+`15VuBQcjwtp0-GXhf6Y9s_Zpl7s8hZ0IBDF3hYlGwCIM`
 
-```bash
-python -m http.server 8000
-```
+To activate order storage:
 
-Open `http://localhost:8000`.
+1. Open the Google Sheet.
+2. Go to **Extensions → Apps Script**.
+3. Replace the Apps Script editor content with `google-apps-script/Code.gs`.
+4. Set the Apps Script project time zone to **Asia/Kolkata**.
+5. Click **Deploy → New deployment → Web app**.
+6. Set **Execute as** to yourself and **Who has access** to **Anyone**.
+7. Copy the deployed `/exec` URL.
+8. The deployed Web App URL is already configured in `js/site-config.js` under `order.endpoint`.
+9. Upload the updated file to GitHub and test one order.
 
-## Free order storage using Google Sheets
-
-1. Create a Google Sheet.
-2. Create a Google Drive folder for payment screenshots.
-3. Open Google Apps Script and paste `google-apps-script/Code.gs`.
-4. Replace the Sheet ID, Drive folder ID and notification email in that script.
-5. Deploy it as a Web App that executes as the owner and can receive public form submissions.
-6. Copy the Web App URL into `js/site-config.js` as `order.endpoint`.
-7. Add final bank details and QR image.
-8. Change `payment.live` from `false` to `true` only after testing.
-
-The Apps Script creates the order sheet header automatically, prevents duplicate order IDs, saves the screenshot to Drive and emails the owner.
-
-## Add a product video later
-
-In the Fireball product inside `js/site-config.js`, replace:
-
-```js
-videos: []
-```
-
-with:
-
-```js
-videos: [
-  {
-    title: "How to use Brand Daddy Fireball",
-    type: "youtube",
-    videoId: "YOUR_YOUTUBE_VIDEO_ID"
-  }
-]
-```
-
-## Add another product later
-
-Duplicate the Fireball object inside `products` in `js/site-config.js`, give it a unique `id`, update its content and set `status: "active"`. The homepage product grid will render it automatically.
-
-## Publish on GitHub Pages
-
-Upload the contents of this folder to a GitHub repository and enable GitHub Pages for the repository's main branch and root folder. All links and assets are relative, so the site works from a project repository path.
-
-## Before public launch
-
-Replace all `XXXXXXXX` values, use the official Brand Daddy product images and authorised-partner material, confirm delivery charges, add terms/privacy/return policies, test the Google Sheet submission, and complete a real low-value payment test before enabling payment.
+Orders are written to an `Orders` tab. The Apps Script calculates the authoritative total using ₹603 per Fireball and 36 Fireballs per bundle, generates the AIV Order Reference after a successful save, and emails the order summary to the AIV email address.

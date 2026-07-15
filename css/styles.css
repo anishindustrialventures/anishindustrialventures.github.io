@@ -1,3 +1,4 @@
+[hidden] { display: none !important; }
 :root {
   --navy-950: #031426;
   --navy-900: #061b34;
@@ -2337,4 +2338,9 @@ li,
   .button-row .button {
     width: 100%;
   }
+}
+
+/* First-step order validation */
+[data-customer-status] {
+  margin-top: 20px;
 }

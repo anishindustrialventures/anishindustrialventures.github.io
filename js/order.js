@@ -22,7 +22,8 @@
     const reviewPanel = document.querySelector("[data-payment-step]");
     const confirmButton = document.querySelector("[data-confirm-order]");
     const editButton = document.querySelector("[data-edit-order]");
-    const statusBox = document.querySelector("[data-order-status]");
+    const customerStatusBox = document.querySelector("[data-customer-status]");
+    const orderStatusBox = document.querySelector("[data-order-status]");
     const successPanel = document.querySelector("[data-success-panel]");
     const targetFrame = document.querySelector("#aiv-order-target");
 
@@ -31,11 +32,18 @@
     document.querySelectorAll("[data-unit-price]").forEach((element) => (element.textContent = helpers.formatMoney(product.pricePerUnit)));
     document.querySelectorAll("[data-unit-mrp]").forEach((element) => (element.textContent = helpers.formatMoney(product.mrpPerUnit)));
 
-    function setStatus(message, type = "info") {
-      statusBox.textContent = message;
-      statusBox.className = `status-message status-message--${type}`;
-      statusBox.hidden = false;
-      statusBox.scrollIntoView({ behavior: "smooth", block: "center" });
+    function setStatus(box, message, type = "info") {
+      if (!box) return;
+      box.textContent = message;
+      box.className = `status-message status-message--${type}`;
+      box.hidden = false;
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function hideStatus(box) {
+      if (!box) return;
+      box.hidden = true;
+      box.textContent = "";
     }
 
     function totals() {
@@ -126,11 +134,21 @@
 
     customerForm.addEventListener("submit", (event) => {
       event.preventDefault();
-      statusBox.hidden = true;
+      hideStatus(customerStatusBox);
+      hideStatus(orderStatusBox);
       successPanel.hidden = true;
 
       if (state.bundleQuantity < 1) {
-        setStatus("Please select at least one 36-ball bundle.", "error");
+        setStatus(customerStatusBox, "Please select at least one 36-ball bundle.", "error");
+        packContainer.querySelector("[data-quantity]")?.focus();
+        return;
+      }
+
+      if (!customerForm.checkValidity()) {
+        const firstInvalid = customerForm.querySelector(":invalid");
+        setStatus(customerStatusBox, "Please complete all mandatory fields marked with an asterisk.", "error");
+        customerForm.reportValidity();
+        firstInvalid?.focus();
         return;
       }
 
@@ -141,26 +159,26 @@
       customer.email = String(customer.email || "").trim();
 
       if (!/^[6-9][0-9]{9}$/.test(customer.phone)) {
-        setStatus("Please enter a valid 10-digit Indian mobile number.", "error");
+        setStatus(customerStatusBox, "Please enter a valid 10-digit Indian mobile number.", "error");
+        document.querySelector("#phone")?.focus();
         return;
       }
       if (!validateGstin(customer.gstin)) {
-        setStatus("Please enter a valid 15-character GSTIN.", "error");
-        return;
-      }
-      if (!customerForm.checkValidity()) {
-        customerForm.reportValidity();
+        setStatus(customerStatusBox, "Please enter a valid 15-character GSTIN.", "error");
+        document.querySelector("#gstin")?.focus();
         return;
       }
 
       state.customer = customer;
       renderReview();
+      hideStatus(customerStatusBox);
       reviewPanel.hidden = false;
       reviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
     editButton.addEventListener("click", () => {
       reviewPanel.hidden = true;
+      hideStatus(orderStatusBox);
       customerForm.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 
@@ -231,7 +249,7 @@
       event.preventDefault();
       if (state.submitting) return;
       if (!state.customer || state.bundleQuantity < 1) {
-        setStatus("Please complete the quantity and customer details first.", "error");
+        setStatus(orderStatusBox, "Please complete the quantity and customer details first.", "error");
         return;
       }
       if (!confirmationForm.checkValidity()) {
@@ -242,7 +260,7 @@
       state.submitting = true;
       confirmButton.disabled = true;
       confirmButton.textContent = "Confirming order…";
-      statusBox.hidden = true;
+      hideStatus(orderStatusBox);
 
       try {
         const response = await submitToAppsScript(buildPayload());
@@ -253,7 +271,7 @@
         successPanel.hidden = false;
         customerForm.querySelectorAll("input, textarea, button").forEach((element) => (element.disabled = true));
         confirmationForm.querySelectorAll("input, button").forEach((element) => (element.disabled = true));
-        setStatus(`Order ${response.orderId} has been recorded successfully.`, "success");
+        setStatus(orderStatusBox, `Order ${response.orderId} has been recorded successfully.`, "success");
 
         const whatsappMessage = [
           `Hi, my AIV order has been recorded.`,
@@ -266,7 +284,7 @@
         document.querySelector("[data-success-whatsapp]").href = helpers.whatsappUrl(whatsappMessage);
       } catch (error) {
         console.error(error);
-        setStatus(error.message || "The order could not be recorded. Please try again.", "error");
+        setStatus(orderStatusBox, error.message || "The order could not be recorded. Please try again.", "error");
         confirmButton.disabled = false;
         confirmButton.textContent = "Confirm order and generate reference";
         state.submitting = false;

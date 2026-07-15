@@ -67,6 +67,7 @@
                 <div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" name="notes" maxlength="600" placeholder="Delivery or invoicing instructions"></textarea></div>
                 <label class="checkbox-field field--full"><input type="checkbox" name="accuracyConfirmed" required><span>I confirm that the order and customer details entered above are accurate.</span></label>
               </div>
+              <div class="status-message" data-customer-status role="alert" aria-live="polite" hidden></div>
               <div class="button-row form-action-row"><button class="button button--primary" type="submit">Next: review and bank details <span aria-hidden="true">→</span></button></div>
             </div>
           </form>
@@ -99,7 +100,7 @@
               <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-confirm-order>Confirm order and generate reference</button><button class="button button--outline" type="button" data-edit-order>Edit details</button></div>
             </form>
 
-            <div class="status-message" data-order-status hidden></div>
+            <div class="status-message" data-order-status role="alert" aria-live="polite" hidden></div>
             <div class="success-panel" data-success-panel hidden>
               <h3>Order recorded successfully</h3>
               <p>Your AIV Order Reference is <strong data-success-order-id></strong>.</p>

@@ -1,22 +1,19 @@
 (() => {
   "use strict";
 
-  document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", async () => {
     const { config, helpers } = window.AIV;
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get("product");
-    const product = config.products.find((item) => item.id === productId) || helpers.activeProduct();
-    const pack = product.packs[0];
+    await window.AIV.productsReady;
 
     const state = {
-      product,
-      bundleQuantity: 0,
+      quantities: new Map(),
       customer: null,
       submitting: false,
       requestToken: ""
     };
 
-    const packContainer = document.querySelector("[data-order-packs]");
+    const products = window.AIV.products.filter((product) => product.active && product.orderEnabled);
+    const productContainer = document.querySelector("[data-order-products]");
     const customerForm = document.querySelector("#customer-form");
     const confirmationForm = document.querySelector("#confirmation-form");
     const reviewPanel = document.querySelector("[data-payment-step]");
@@ -26,11 +23,9 @@
     const orderStatusBox = document.querySelector("[data-order-status]");
     const successPanel = document.querySelector("[data-success-panel]");
     const targetFrame = document.querySelector("#aiv-order-target");
+    const nextButton = document.querySelector("[data-next-review]");
 
     document.title = `Place Order | ${config.company.shortName}`;
-    document.querySelector("[data-order-product-name]").textContent = product.name;
-    document.querySelectorAll("[data-unit-price]").forEach((element) => (element.textContent = helpers.formatMoney(product.pricePerUnit)));
-    document.querySelectorAll("[data-unit-mrp]").forEach((element) => (element.textContent = helpers.formatMoney(product.mrpPerUnit)));
 
     function setStatus(box, message, type = "info") {
       if (!box) return;
@@ -46,63 +41,110 @@
       box.textContent = "";
     }
 
+    function selectedItems() {
+      return products
+        .map((product) => {
+          const bundles = Number(state.quantities.get(product.id) || 0);
+          const totalUnits = bundles * product.bundleQuantity;
+          const lineTotal = totalUnits * product.priceInclGst;
+          return { product, bundles, totalUnits, lineTotal };
+        })
+        .filter((item) => item.bundles > 0);
+    }
+
     function totals() {
-      const bundles = Number(state.bundleQuantity || 0);
-      const pieces = bundles * pack.pieces;
-      const inclusiveTotal = pieces * product.pricePerUnit;
+      const items = selectedItems();
       return {
-        bundles,
-        pieces,
-        inclusiveTotal,
-        unitPrice: product.pricePerUnit,
-        mrpPerUnit: product.mrpPerUnit,
-        gstRate: config.order.gstRate,
-        shippingIncluded: config.order.shippingIncluded
+        items,
+        productLines: items.length,
+        bundles: items.reduce((sum, item) => sum + item.bundles, 0),
+        units: items.reduce((sum, item) => sum + item.totalUnits, 0),
+        total: items.reduce((sum, item) => sum + item.lineTotal, 0),
+        shippingIncluded: items.length > 0 && items.every((item) => item.product.shippingIncluded)
       };
+    }
+
+    function setQuantity(product, requestedBundles) {
+      let bundles = Math.max(0, Math.min(999, Math.floor(Number(requestedBundles) || 0)));
+      if (bundles > 0 && bundles < product.minimumBundles) bundles = product.minimumBundles;
+      state.quantities.set(product.id, bundles);
+      const input = productContainer.querySelector(`[data-product-id="${CSS.escape(product.id)}"] [data-quantity]`);
+      if (input) input.value = String(bundles);
+      updateTotals();
     }
 
     function updateTotals() {
       const value = totals();
+      document.querySelectorAll("[data-total-product-lines]").forEach((element) => (element.textContent = String(value.productLines)));
       document.querySelectorAll("[data-total-bundles]").forEach((element) => (element.textContent = String(value.bundles)));
-      document.querySelectorAll("[data-total-pieces]").forEach((element) => (element.textContent = String(value.pieces)));
-      document.querySelectorAll("[data-order-total]").forEach((element) => (element.textContent = helpers.formatMoney(value.inclusiveTotal)));
-      document.querySelectorAll("[data-pack-line]").forEach((element) => (element.textContent = helpers.formatMoney(value.inclusiveTotal)));
+      document.querySelectorAll("[data-total-units]").forEach((element) => (element.textContent = String(value.units)));
+      document.querySelectorAll("[data-order-total]").forEach((element) => (element.textContent = helpers.formatMoney(value.total)));
+      document.querySelectorAll("[data-shipping-status]").forEach((element) => (element.textContent = value.shippingIncluded ? "Included" : "As applicable"));
+
+      products.forEach((product) => {
+        const bundles = Number(state.quantities.get(product.id) || 0);
+        const lineTotal = bundles * product.bundleQuantity * product.priceInclGst;
+        const row = productContainer.querySelector(`[data-product-id="${CSS.escape(product.id)}"]`);
+        if (row) row.querySelector("[data-line-total]").textContent = helpers.formatMoney(lineTotal);
+      });
     }
 
-    function renderPackSelector() {
-      const bundlePrice = pack.pieces * product.pricePerUnit;
-      const row = document.createElement("article");
-      row.className = "order-pack order-pack--single";
-      row.innerHTML = `
-        <div class="order-pack__main">
-          <span class="order-pack__pieces">${pack.pieces}</span>
-          <div>
-            <h3>${pack.label}</h3>
-            <p>${helpers.formatMoney(bundlePrice)} per bundle · GST and shipping included</p>
+    function renderProductSelector() {
+      productContainer.innerHTML = "";
+      if (!products.length) {
+        productContainer.innerHTML = `<div class="empty-state"><h3>No products are currently enabled for online orders</h3><p>Please contact AIV on WhatsApp for current availability.</p><a class="button button--outline" href="${helpers.whatsappUrl()}" target="_blank" rel="noopener noreferrer">WhatsApp AIV</a></div>`;
+        nextButton.disabled = true;
+        return;
+      }
+
+      products.forEach((product) => {
+        state.quantities.set(product.id, 0);
+        const bundlePrice = product.bundleQuantity * product.priceInclGst;
+        const codeMarkup = [
+          product.productCode ? `<span><b>Product Code</b> ${helpers.escapeHtml(product.productCode)}</span>` : "",
+          product.sapCode ? `<span><b>SAP Code</b> ${helpers.escapeHtml(product.sapCode)}</span>` : ""
+        ].filter(Boolean).join("");
+
+        const row = document.createElement("article");
+        row.className = "order-product-row";
+        row.dataset.productId = product.id;
+        row.innerHTML = `
+          <img class="order-product-row__image" src="${helpers.escapeHtml(product.image)}" alt="${helpers.escapeHtml(product.name)}" loading="lazy">
+          <div class="order-product-row__details">
+            <h3>${helpers.escapeHtml(product.name)}</h3>
+            ${codeMarkup ? `<div class="product-code-row">${codeMarkup}</div>` : ""}
+            <p>${helpers.formatMoney(product.priceInclGst)} per ${helpers.escapeHtml(product.unit)} · ${product.gstRate > 0 ? `${product.gstRate}% GST included` : "final price"}${product.shippingIncluded ? " · shipping included" : ""}</p>
+            <small>${product.bundleQuantity} ${helpers.escapeHtml(helpers.unitLabel(product, product.bundleQuantity))} per bundle · minimum ${product.minimumQuantity} ${helpers.escapeHtml(helpers.unitLabel(product, product.minimumQuantity))} · ${helpers.formatMoney(bundlePrice)} per bundle</small>
           </div>
-        </div>
-        <div class="quantity-control" aria-label="Number of ${pack.label}s">
-          <button type="button" data-decrement aria-label="Decrease bundle quantity">−</button>
-          <input type="number" min="0" max="999" step="1" value="0" inputmode="numeric" data-quantity aria-label="Bundle quantity">
-          <button type="button" data-increment aria-label="Increase bundle quantity">+</button>
-        </div>
-        <strong class="order-pack__line-total" data-pack-line>${helpers.formatMoney(0)}</strong>
-      `;
-      packContainer.appendChild(row);
+          <div class="quantity-control" aria-label="Number of bundles for ${helpers.escapeHtml(product.name)}">
+            <button type="button" data-decrement aria-label="Decrease quantity">−</button>
+            <input type="number" min="0" max="999" step="1" value="0" inputmode="numeric" data-quantity aria-label="Bundle quantity">
+            <button type="button" data-increment aria-label="Increase quantity">+</button>
+          </div>
+          <strong class="order-pack__line-total" data-line-total>${helpers.formatMoney(0)}</strong>`;
+        productContainer.appendChild(row);
 
-      const input = row.querySelector("[data-quantity]");
-      row.addEventListener("click", (event) => {
-        if (event.target.closest("[data-increment]")) state.bundleQuantity = Math.min(999, state.bundleQuantity + 1);
-        if (event.target.closest("[data-decrement]")) state.bundleQuantity = Math.max(0, state.bundleQuantity - 1);
-        input.value = state.bundleQuantity;
-        updateTotals();
+        const input = row.querySelector("[data-quantity]");
+        row.querySelector("[data-increment]").addEventListener("click", () => {
+          const current = Number(state.quantities.get(product.id) || 0);
+          setQuantity(product, current === 0 ? product.minimumBundles : current + 1);
+        });
+        row.querySelector("[data-decrement]").addEventListener("click", () => {
+          const current = Number(state.quantities.get(product.id) || 0);
+          setQuantity(product, current <= product.minimumBundles ? 0 : current - 1);
+        });
+        input.addEventListener("change", () => setQuantity(product, input.value));
+        input.addEventListener("input", () => {
+          const value = Math.max(0, Math.min(999, Math.floor(Number(input.value) || 0)));
+          state.quantities.set(product.id, value);
+          updateTotals();
+        });
       });
 
-      input.addEventListener("input", () => {
-        state.bundleQuantity = Math.max(0, Math.min(999, Math.floor(Number(input.value) || 0)));
-        input.value = state.bundleQuantity;
-        updateTotals();
-      });
+      const requested = new URLSearchParams(window.location.search).get("product");
+      const requestedProduct = helpers.findProduct(requested);
+      if (requestedProduct?.orderEnabled) setQuantity(requestedProduct, requestedProduct.minimumBundles);
+      updateTotals();
     }
 
     function populatePaymentDetails() {
@@ -112,19 +154,17 @@
       document.querySelector("[data-bank-account-number]").textContent = payment.accountNumber;
       document.querySelector("[data-bank-ifsc]").textContent = payment.ifsc;
       document.querySelector("[data-bank-branch]").textContent = payment.branch;
-      document.querySelector("[data-bank-micr]").textContent = payment.micr;
       document.querySelector("[data-payment-instructions]").textContent = payment.instructions;
     }
 
     function renderReview() {
       const value = totals();
       const list = document.querySelector("[data-review-items]");
-      list.innerHTML = `
-        <div class="review-line">
-          <span>${pack.label} × ${value.bundles}</span>
-          <strong>${helpers.formatMoney(value.inclusiveTotal)}</strong>
-        </div>
-      `;
+      list.innerHTML = value.items.map(({ product, bundles, totalUnits, lineTotal }) => `
+        <div class="review-item-block">
+          <div class="review-line"><span>${helpers.escapeHtml(product.name)}</span><strong>${helpers.formatMoney(lineTotal)}</strong></div>
+          <small>${product.productCode ? `Product Code: ${helpers.escapeHtml(product.productCode)} · ` : ""}${product.sapCode ? `SAP Code: ${helpers.escapeHtml(product.sapCode)} · ` : ""}${bundles} bundle(s) · ${totalUnits} ${helpers.escapeHtml(helpers.unitLabel(product, totalUnits))}</small>
+        </div>`).join("");
       document.querySelector("[data-order-id]").textContent = "Generated after confirmation";
     }
 
@@ -138,9 +178,15 @@
       hideStatus(orderStatusBox);
       successPanel.hidden = true;
 
-      if (state.bundleQuantity < 1) {
-        setStatus(customerStatusBox, "Please select at least one 36-ball bundle.", "error");
-        packContainer.querySelector("[data-quantity]")?.focus();
+      if (!selectedItems().length) {
+        setStatus(customerStatusBox, "Please select at least one product bundle.", "error");
+        productContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+      }
+
+      const invalidQuantity = selectedItems().find(({ product, totalUnits }) => totalUnits < product.minimumQuantity);
+      if (invalidQuantity) {
+        setStatus(customerStatusBox, `The minimum quantity for ${invalidQuantity.product.name} is ${invalidQuantity.product.minimumQuantity}.`, "error");
         return;
       }
 
@@ -171,7 +217,6 @@
 
       state.customer = customer;
       renderReview();
-      hideStatus(customerStatusBox);
       reviewPanel.hidden = false;
       reviewPanel.scrollIntoView({ behavior: "smooth", block: "start" });
     });
@@ -183,15 +228,15 @@
     });
 
     function buildPayload() {
-      const value = totals();
       state.requestToken = `${Date.now()}-${Math.random().toString(36).slice(2, 12)}`;
       return {
-        version: 2,
+        version: 3,
         requestToken: state.requestToken,
         submittedAt: new Date().toISOString(),
-        productId: product.id,
-        productName: product.name,
-        bundleQuantity: value.bundles,
+        items: selectedItems().map(({ product, bundles }) => ({
+          productCode: product.productCode,
+          bundles
+        })),
         customer: state.customer
       };
     }
@@ -209,7 +254,7 @@
           completed = true;
           window.removeEventListener("message", onMessage);
           reject(new Error("The order service did not respond. Please retry once or contact AIV on WhatsApp."));
-        }, config.order.responseTimeoutMs || 20000);
+        }, config.order.responseTimeoutMs || 25000);
 
         function cleanup() {
           window.clearTimeout(timeout);
@@ -227,13 +272,11 @@
         }
 
         window.addEventListener("message", onMessage);
-
         const form = document.createElement("form");
         form.method = "POST";
         form.action = config.order.endpoint;
         form.target = targetFrame.name;
         form.hidden = true;
-
         const input = document.createElement("input");
         input.type = "hidden";
         input.name = "payload";
@@ -248,8 +291,8 @@
     confirmationForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       if (state.submitting) return;
-      if (!state.customer || state.bundleQuantity < 1) {
-        setStatus(orderStatusBox, "Please complete the quantity and customer details first.", "error");
+      if (!state.customer || !selectedItems().length) {
+        setStatus(orderStatusBox, "Please complete the product and customer details first.", "error");
         return;
       }
       if (!confirmationForm.checkValidity()) {
@@ -267,19 +310,20 @@
         const value = totals();
         document.querySelector("[data-order-id]").textContent = response.orderId;
         document.querySelector("[data-success-order-id]").textContent = response.orderId;
-        document.querySelector("[data-success-total]").textContent = helpers.formatMoney(response.total || value.inclusiveTotal);
+        document.querySelector("[data-success-total]").textContent = helpers.formatMoney(response.total || value.total);
         successPanel.hidden = false;
         customerForm.querySelectorAll("input, textarea, button").forEach((element) => (element.disabled = true));
         confirmationForm.querySelectorAll("input, button").forEach((element) => (element.disabled = true));
         setStatus(orderStatusBox, `Order ${response.orderId} has been recorded successfully.`, "success");
 
+        const itemLines = value.items.map(({ product, bundles, totalUnits }) =>
+          `${product.name}: ${bundles} bundle(s), ${totalUnits} ${helpers.unitLabel(product, totalUnits)}`
+        );
         const whatsappMessage = [
-          `Hi, my AIV order has been recorded.`,
+          "Hi, my AIV order has been recorded.",
           `Order Reference: ${response.orderId}`,
-          `Product: ${product.name}`,
-          `Bundles: ${value.bundles}`,
-          `Total Fireballs: ${value.pieces}`,
-          `Total payable: ${helpers.formatMoney(response.total || value.inclusiveTotal)}`
+          ...itemLines,
+          `Total payable: ${helpers.formatMoney(response.total || value.total)}`
         ].join("\n");
         document.querySelector("[data-success-whatsapp]").href = helpers.whatsappUrl(whatsappMessage);
       } catch (error) {
@@ -291,7 +335,7 @@
       }
     });
 
-    renderPackSelector();
+    renderProductSelector();
     populatePaymentDetails();
     updateTotals();
   });

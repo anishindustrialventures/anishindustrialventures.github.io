@@ -20,58 +20,89 @@ window.AIV_CONFIG = {
     phoneHref: "+917307512016",
     email: "anishindustrialventures@gmail.com",
     whatsappNumber: "917307512016",
-    defaultWhatsappMessage: "Hi, I would like to know more about Brand Daddy Fireball."
+    defaultWhatsappMessage: "Hi, I would like to know more about the products available from Anish Industrial Ventures."
+  },
+
+  data: {
+    productsEndpoint: "https://script.google.com/macros/s/AKfycbw_TQXKdmVgiSev223VZPgTy8uvvXLEzWtxBpzxzJ_49ndADbRb_Zm_hiYyYtM5ue39/exec",
+    productsTimeoutMs: 15000
   },
 
   order: {
     currency: "INR",
-    gstRate: 0.18,
     gstinRequired: true,
-    shippingIncluded: true,
     endpoint: "https://script.google.com/macros/s/AKfycbw_TQXKdmVgiSev223VZPgTy8uvvXLEzWtxBpzxzJ_49ndADbRb_Zm_hiYyYtM5ue39/exec",
-    responseTimeoutMs: 20000
+    responseTimeoutMs: 25000
   },
 
   payment: {
     accountName: "Anish Industrial Ventures",
     bankName: "HDFC Bank",
-    accountNumber: "502000121908336",
+    accountNumber: "50200121908336",
     ifsc: "HDFC0000262",
     branch: "Sangrur",
-    micr: "148240002",
-    instructions: "After confirming the order, use the generated AIV Order Reference in your bank-transfer remarks. Dispatch will be processed after payment verification."
+    instructions: "After confirming the order, use the generated AIV Order Reference in your bank-transfer remarks. The order will be processed after payment verification."
   },
 
-  products: [
+  /*
+   * These products keep the website usable if Google Sheets is temporarily unavailable.
+   * The live website normally loads product data from the Products tab in Google Sheets.
+   */
+  fallbackProducts: [
     {
-      id: "brand-daddy-fireball",
-      slug: "brand-daddy-fireball",
-      name: "Brand Daddy Fireball",
-      shortName: "Fireball",
-      status: "active",
-      mrpPerUnit: 999,
-      pricePerUnit: 603,
-      priceIncludesGst: true,
+      id: "gfo01",
+      productCode: "GFO01",
+      sapCode: "0000366966",
+      name: "GFO Automatic Fireball – 400 gm",
+      image: "assets/gfo-automatic-fireball-400g.png",
+      summary: "Automatic fire-extinguisher ball designed to activate after contact with flame.",
+      description: "A 400 gm automatic fireball suitable for fire-prone areas, LPG-cylinder locations, vehicles and electrical panels.",
+      basePrice: 646.61,
+      gstRate: 18,
+      priceInclGst: 763,
+      mrp: 999,
+      bundleQuantity: 20,
+      minimumQuantity: 20,
+      unit: "ball",
       shippingIncluded: true,
-      image: "assets/brand-daddy-fireball.png",
-      heroImage: "assets/brand-daddy-fireball.png",
-      summary: "A clean, safe and efficient firelighter designed for dependable ignition.",
-      description: "Brand Daddy Fireball is a practical firelighting solution developed for quick and consistent ignition. It is supplied by Anish Industrial Ventures in sealed bundles for reliable commercial and repeat ordering.",
-      benefits: [
-        "Quick and dependable ignition",
-        "Clean and convenient handling",
-        "Consistent product quality",
-        "GST invoice and shipping included"
+      hsnCode: "84241000",
+      specifications: [
+        "Weight: 400 gm",
+        "One box contains 20 balls",
+        "Automatic activation within 5–10 seconds",
+        "Zero maintenance",
+        "5-year shelf life"
       ],
-      usage: [
-        "Place the fireball in the required ignition area.",
-        "Light it carefully using an appropriate flame source.",
-        "Allow it to ignite the surrounding fuel before adding more material.",
-        "Always follow the instructions printed on the official product packaging."
+      active: true,
+      orderEnabled: true,
+      displayOrder: 1
+    },
+    {
+      id: "domestic-suraksha-lpg-hose",
+      productCode: "",
+      sapCode: "",
+      name: "Domestic Suraksha LPG Hose",
+      image: "assets/domestic-suraksha-lpg-hose.png",
+      summary: "LERC-approved LPG Suraksha Hose Part 2 for low-pressure domestic and household applications.",
+      description: "Domestic LPG hose designed for low-pressure household use in accordance with IS 9573 Part 2.",
+      basePrice: 0,
+      gstRate: 0,
+      priceInclGst: 0,
+      mrp: 0,
+      bundleQuantity: 0,
+      minimumQuantity: 0,
+      unit: "",
+      shippingIncluded: false,
+      hsnCode: "",
+      specifications: [
+        "IS 9573 Part 2",
+        "LERC approved",
+        "Recommended maximum working pressure: 10 Bar",
+        "Minimum burst pressure: 40 Bar"
       ],
-      packs: [
-        { id: "bundle-36", label: "36-ball bundle", pieces: 36 }
-      ]
+      active: true,
+      orderEnabled: false,
+      displayOrder: 2
     }
   ]
 };

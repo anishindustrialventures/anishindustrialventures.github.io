@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Place a Brand Daddy Fireball order with Anish Industrial Ventures.">
+  <meta name="description" content="Place a product order with Anish Industrial Ventures.">
   <meta name="theme-color" content="#061B34">
   <title>Place Order | AIV</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -27,16 +27,16 @@
     <section class="page-hero page-hero--compact">
       <div class="container page-hero__inner">
         <div>
-          <div class="breadcrumbs"><a href="index.html">Home</a><span>/</span><a href="product.html">Brand Daddy Fireball</a><span>/</span><span>Place order</span></div>
+          <div class="breadcrumbs"><a href="index.html">Home</a><span>/</span><span>Place order</span></div>
           <span class="eyebrow">Official AIV order form</span>
-          <h1>Place your Fireball order.</h1>
-          <p>Orders are accepted in complete bundles of 36. The selling price is ₹603 per Fireball, inclusive of 18% GST and shipping.</p>
+          <h1>Select products and place your order.</h1>
+          <p>Products, prices, GST, order multiples and minimum quantities are loaded directly from the official AIV product sheet.</p>
         </div>
-        <div class="order-hero-facts" aria-label="Order facts">
-          <div><span>MRP per ball</span><strong><del>₹999</del></strong></div>
-          <div><span>Selling price</span><strong>₹603</strong></div>
-          <div><span>One bundle</span><strong>36 balls</strong></div>
-          <div><span>Bundle total</span><strong>₹21,708</strong></div>
+        <div class="order-hero-facts" aria-label="Order summary">
+          <div><span>Selected products</span><strong data-total-product-lines>0</strong></div>
+          <div><span>Total bundles</span><strong data-total-bundles>0</strong></div>
+          <div><span>Total units</span><strong data-total-units>0</strong></div>
+          <div><span>Order total</span><strong data-order-total>₹0</strong></div>
         </div>
       </div>
     </section>
@@ -46,9 +46,9 @@
         <div>
           <form id="customer-form" class="order-panel" novalidate>
             <div class="form-section">
-              <div class="form-section__title"><span>1</span><h2>Select quantity</h2></div>
-              <p><strong data-order-product-name>Brand Daddy Fireball</strong> · <span data-unit-price>₹603</span> per ball · GST and shipping included.</p>
-              <div data-order-packs></div>
+              <div class="form-section__title"><span>1</span><h2>Select products and quantity</h2></div>
+              <p>Select the number of complete bundles required for each product. You may order more than one product in the same order.</p>
+              <div class="order-products-list" data-order-products><p>Loading products…</p></div>
             </div>
 
             <div class="form-section">
@@ -58,30 +58,29 @@
                 <div class="field"><label for="contact-person">Contact person <span>*</span></label><input id="contact-person" name="contactPerson" autocomplete="name" required maxlength="100"></div>
                 <div class="field"><label for="phone">Mobile number <span>*</span></label><input id="phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10-digit Indian mobile number" required maxlength="14"></div>
                 <div class="field"><label for="email">Email address <span>*</span></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
-                <div class="field"><label for="gstin">GSTIN <span>*</span></label><input id="gstin" name="gstin" autocomplete="off" placeholder="15-character GSTIN" required maxlength="15" style="text-transform:uppercase"><small>Mandatory for order processing and GST invoicing.</small></div>
+                <div class="field"><label for="gstin">GSTIN <span>*</span></label><input id="gstin" name="gstin" autocomplete="off" placeholder="15-character GSTIN" required maxlength="15" style="text-transform:uppercase"><small>Mandatory for GST invoicing.</small></div>
                 <div class="field"><label for="state">State <span>*</span></label><input id="state" name="state" autocomplete="address-level1" required maxlength="80"></div>
                 <div class="field field--full"><label for="billing-address">Billing address <span>*</span></label><textarea id="billing-address" name="billingAddress" autocomplete="billing street-address" required maxlength="500"></textarea></div>
                 <div class="field field--full"><label for="delivery-address">Delivery address <span>*</span></label><textarea id="delivery-address" name="deliveryAddress" autocomplete="shipping street-address" required maxlength="500"></textarea></div>
                 <div class="field"><label for="pincode">Delivery PIN code <span>*</span></label><input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6"></div>
                 <div class="field"><label for="purchase-order">Purchase order reference</label><input id="purchase-order" name="purchaseOrderReference" maxlength="100"></div>
                 <div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" name="notes" maxlength="600" placeholder="Delivery or invoicing instructions"></textarea></div>
-                <label class="checkbox-field field--full"><input type="checkbox" name="accuracyConfirmed" required><span>I confirm that the order and customer details entered above are accurate.</span></label>
               </div>
               <div class="status-message" data-customer-status role="alert" aria-live="polite" hidden></div>
-              <div class="button-row form-action-row"><button class="button button--primary" type="submit">Next: review and bank details <span aria-hidden="true">→</span></button></div>
+              <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-next-review>Next: review and bank details <span aria-hidden="true">→</span></button></div>
             </div>
           </form>
 
           <section class="order-panel payment-step" data-payment-step hidden>
             <div class="form-section__title"><span>3</span><h2>Review and confirm order</h2></div>
-
             <div class="review-box">
               <div class="review-box__header"><span>Order reference</span><strong data-order-id>Generated after confirmation</strong></div>
               <div data-review-items></div>
+              <div class="review-line"><span>Selected product lines</span><strong data-total-product-lines>0</strong></div>
               <div class="review-line"><span>Total bundles</span><strong data-total-bundles>0</strong></div>
-              <div class="review-line"><span>Total Fireballs</span><strong data-total-pieces>0</strong></div>
-              <div class="review-line"><span>GST</span><strong>18% included</strong></div>
-              <div class="review-line"><span>Shipping</span><strong>Included</strong></div>
+              <div class="review-line"><span>Total units</span><strong data-total-units>0</strong></div>
+              <div class="review-line"><span>GST</span><strong>Included as shown per product</strong></div>
+              <div class="review-line"><span>Shipping</span><strong data-shipping-status>As applicable</strong></div>
               <div class="review-line review-line--total"><span>Total payable</span><strong data-order-total>₹0</strong></div>
             </div>
 
@@ -89,14 +88,13 @@
             <div class="bank-details bank-details--full">
               <div class="bank-row"><span>Account name</span><strong data-bank-account-name>Anish Industrial Ventures</strong></div>
               <div class="bank-row"><span>Bank name</span><strong data-bank-name>HDFC Bank</strong></div>
-              <div class="bank-row"><span>Account number</span><strong data-bank-account-number>502000121908336</strong></div>
+              <div class="bank-row"><span>Account number</span><strong data-bank-account-number>50200121908336</strong></div>
               <div class="bank-row"><span>IFSC</span><strong data-bank-ifsc>HDFC0000262</strong></div>
               <div class="bank-row"><span>Branch</span><strong data-bank-branch>Sangrur</strong></div>
-              <div class="bank-row"><span>MICR</span><strong data-bank-micr>148240002</strong></div>
             </div>
 
             <form id="confirmation-form" novalidate>
-              <label class="checkbox-field confirm-checkbox"><input type="checkbox" name="orderConsent" required><span>I have reviewed the order, bank details and total payable. I confirm that AIV may record this order for processing.</span></label>
+              <label class="checkbox-field confirm-checkbox"><input type="checkbox" name="orderConsent" required><span>I have reviewed the selected products, bank details and total payable. I confirm that AIV may record this order for processing.</span></label>
               <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-confirm-order>Confirm order and generate reference</button><button class="button button--outline" type="button" data-edit-order>Edit details</button></div>
             </form>
 
@@ -105,25 +103,23 @@
               <h3>Order recorded successfully</h3>
               <p>Your AIV Order Reference is <strong data-success-order-id></strong>.</p>
               <p>Total payable: <strong data-success-total></strong>. Use the Order Reference in your bank-transfer remarks. AIV will process the order after payment verification.</p>
-              <a class="button button--outline" href="#" target="_blank" rel="noopener" data-success-whatsapp>Share order on WhatsApp</a>
+              <a class="button button--outline" href="#" target="_blank" rel="noopener noreferrer" data-success-whatsapp>Share order on WhatsApp</a>
             </div>
           </section>
         </div>
 
-        <aside class="order-summary" aria-label="Order summary">
-          <div class="order-summary__header"><h2>Order summary</h2><p>Complete bundles of 36 only</p></div>
-          <div class="order-summary__body">
-            <div class="order-summary__row"><span>Bundles</span><strong data-total-bundles>0</strong></div>
-            <div class="order-summary__row"><span>Total Fireballs</span><strong data-total-pieces>0</strong></div>
-            <div class="order-summary__row"><span>MRP per Fireball</span><strong><del data-unit-mrp>₹999</del></strong></div>
-            <div class="order-summary__row"><span>Selling price</span><strong data-unit-price>₹603</strong></div>
-            <div class="order-summary__row"><span>GST</span><strong>18% included</strong></div>
-            <div class="order-summary__row"><span>Shipping</span><strong>Included</strong></div>
-            <div class="order-summary__row order-summary__total"><span>Total payable</span><strong data-order-total>₹0</strong></div>
-          </div>
+        <aside class="order-summary-card">
+          <span class="eyebrow">Live order summary</span>
+          <h2>Your selection</h2>
+          <div class="summary-stat"><span>Products</span><strong data-total-product-lines>0</strong></div>
+          <div class="summary-stat"><span>Bundles</span><strong data-total-bundles>0</strong></div>
+          <div class="summary-stat"><span>Total units</span><strong data-total-units>0</strong></div>
+          <div class="summary-stat summary-stat--total"><span>Total</span><strong data-order-total>₹0</strong></div>
+          <p>GST and shipping are applied according to the official product details shown above.</p>
         </aside>
       </div>
     </section>
+    <iframe id="aiv-order-target" name="aiv-order-target" title="Order submission response" hidden></iframe>
   </main>
 
   <footer class="site-footer">
@@ -131,11 +127,10 @@
       <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p><p class="footer-legal">Proprietor: <span data-proprietor-name>Sunita Gupta</span></p></div>
       <div class="footer-column"><h3>Quick links</h3><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></div>
       <div class="footer-column"><h3>Business registration</h3><span>GSTIN: <strong data-gstin>03AGRPG5512C1ZV</strong></span><span>Udyam: <strong data-udyam>UDYAM-PB-19-0073269</strong></span><span>Regular proprietorship</span></div>
-      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 3h4l2 5-3 2c2 4 4 6 8 8l2-3 5 2v4c0 1-1 2-2 2C10 23 1 14 1 4c0-1 1-1 3-1Z"/></svg><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 5h18v14H3z"/><path d="m3 6 9 7 9-7"/></svg><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 22s7-6 7-13a7 7 0 1 0-14 0c0 7 7 13 7 13Z"/><circle cx="12" cy="9" r="2"/></svg><span data-address></span></div></div>
+      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><span data-address></span></div></div>
       <div class="footer-column"><h3>WhatsApp</h3><a class="whatsapp-icon" href="#" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
     </div>
     <div class="container footer-bottom">© <span data-year></span> <span data-company-name>Anish Industrial Ventures</span>. All rights reserved.</div>
   </footer>
-  <iframe name="aiv-order-target" id="aiv-order-target" title="Order submission" hidden></iframe>
 </body>
 </html>

@@ -98,3 +98,9 @@ You may use:
 - A common Google Drive sharing URL; the website attempts to convert it to a direct view URL
 
 For the most reliable display, use a public direct image URL or upload the image into the repository `assets` folder.
+
+
+## Current order workflow
+- Product catalogue uses browser cache and Apps Script cache for faster loading.
+- SDMS Portal Number is mandatory. SDMS screenshot is optional.
+- Payment screenshot is mandatory and is stored in Google Drive; its link is saved in Orders.

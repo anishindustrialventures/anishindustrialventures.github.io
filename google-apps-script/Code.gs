@@ -17,7 +17,9 @@ const AIV_SETTINGS = {
   ORDERS_SHEET: 'Orders',
   ORDER_ITEMS_SHEET: 'Order Items',
   NOTIFICATION_EMAIL: 'anishindustrialventures@gmail.com',
-  TIMEZONE: 'Asia/Kolkata'
+  TIMEZONE: 'Asia/Kolkata',
+  UPLOAD_FOLDER: 'AIV Order Uploads',
+  PRODUCT_CACHE_SECONDS: 600
 };
 
 const PRODUCT_HEADERS = [
@@ -51,11 +53,13 @@ const ORDER_HEADERS = [
   'Phone',
   'Email',
   'GSTIN',
+  'SDMS Portal Number',
+  'SDMS Screenshot Link',
+  'Payment Screenshot Link',
   'State',
   'Delivery PIN Code',
   'Billing Address',
   'Delivery Address',
-  'Purchase Order Reference',
   'Order Notes',
   'Total Payable',
   'Request Token'
@@ -129,23 +133,34 @@ function setupAivSheets() {
   return 'Products, Orders and Order Items sheets are ready.';
 }
 
+function refreshProductsCache() {
+  CacheService.getScriptCache().remove('aiv-products-v2');
+  return 'Product cache cleared. The next website request will load fresh sheet data.';
+}
+
 function doGet(e) {
   try {
     const action = String(e && e.parameter && e.parameter.action || '').toLowerCase();
     if (action === 'products') {
-      const spreadsheet = SpreadsheetApp.openById(AIV_SETTINGS.SPREADSHEET_ID);
-      const productsSheet = ensureProductsSheet_(spreadsheet);
-      const products = getProductRecords_(productsSheet)
-        .filter((product) => isYes_(product['Active']))
-        .sort((a, b) => number_(a['Display Order']) - number_(b['Display Order']))
-        .map(productForClient_);
-
-      return jsonOrJsonpResponse_({
-        ok: true,
-        source: 'aiv-product-catalogue',
-        products: products,
-        updatedAt: new Date().toISOString()
-      }, e && e.parameter && e.parameter.callback);
+      const cache = CacheService.getScriptCache();
+      const cacheKey = 'aiv-products-v2';
+      const cached = cache.get(cacheKey);
+      let catalogue;
+      if (cached) {
+        catalogue = JSON.parse(cached);
+      } else {
+        const spreadsheet = SpreadsheetApp.openById(AIV_SETTINGS.SPREADSHEET_ID);
+        const productsSheet = ensureProductsSheet_(spreadsheet);
+        catalogue = {
+          products: getProductRecords_(productsSheet)
+            .filter((product) => isYes_(product['Active']))
+            .sort((a, b) => number_(a['Display Order']) - number_(b['Display Order']))
+            .map(productForClient_),
+          updatedAt: new Date().toISOString()
+        };
+        cache.put(cacheKey, JSON.stringify(catalogue), AIV_SETTINGS.PRODUCT_CACHE_SECONDS);
+      }
+      return jsonOrJsonpResponse_({ ok: true, source: 'aiv-product-catalogue', products: catalogue.products, updatedAt: catalogue.updatedAt }, e && e.parameter && e.parameter.callback);
     }
 
     return ContentService
@@ -199,21 +214,26 @@ function doPost(e) {
     const totalPayable = roundMoney_(authoritativeItems.reduce((sum, item) => sum + item.lineTotal, 0));
     const orderId = generateOrderId_();
     const customer = payload.customer || {};
+    const uploads = payload.uploads || {};
+    if (!uploads.payment || !uploads.payment.data) throw new Error('Payment screenshot is mandatory.');
+    const uploadLinks = saveOrderUploads_(orderId, uploads);
 
     sheets.orders.appendRow([
       new Date(),
       orderId,
-      'PAYMENT_PENDING',
+      'PAYMENT_SUBMITTED',
       safeCell_(customer.businessName),
       safeCell_(customer.contactPerson),
       safeCell_(customer.phone),
       safeCell_(customer.email),
       safeCell_(String(customer.gstin || '').toUpperCase()),
+      safeCell_(customer.sdmsPortalNumber),
+      safeCell_(uploadLinks.sdms),
+      safeCell_(uploadLinks.payment),
       safeCell_(customer.state),
       safeCell_(customer.pincode),
       safeCell_(customer.billingAddress),
       safeCell_(customer.deliveryAddress),
-      safeCell_(customer.purchaseOrderReference),
       safeCell_(customer.notes),
       totalPayable,
       safeCell_(payload.requestToken)
@@ -411,7 +431,7 @@ function validateCustomerPayload_(payload) {
   if (!payload.requestToken) throw new Error('Request token is missing.');
 
   const customer = payload.customer || {};
-  const required = ['businessName', 'contactPerson', 'phone', 'email', 'gstin', 'state', 'billingAddress', 'deliveryAddress', 'pincode'];
+  const required = ['businessName', 'contactPerson', 'phone', 'email', 'gstin', 'sdmsPortalNumber', 'state', 'billingAddress', 'deliveryAddress', 'pincode'];
   required.forEach((field) => {
     if (!String(customer[field] || '').trim()) throw new Error(`Missing customer field: ${field}.`);
   });
@@ -470,6 +490,8 @@ function formatOrdersSheet_(sheet) {
   sheet.autoResizeColumns(1, ORDER_HEADERS.length);
   sheet.setColumnWidth(ORDER_HEADERS.indexOf('Billing Address') + 1, 280);
   sheet.setColumnWidth(ORDER_HEADERS.indexOf('Delivery Address') + 1, 280);
+  sheet.setColumnWidth(ORDER_HEADERS.indexOf('SDMS Screenshot Link') + 1, 220);
+  sheet.setColumnWidth(ORDER_HEADERS.indexOf('Payment Screenshot Link') + 1, 220);
 }
 
 function formatOrderItemsSheet_(sheet) {
@@ -491,6 +513,32 @@ function formatOrderItemRows_(sheet, firstRow, numberOfRows) {
   sheet.getRange(firstRow, ORDER_ITEM_HEADERS.indexOf('Line Total') + 1, numberOfRows, 1).setNumberFormat('₹#,##0.00');
 }
 
+function saveOrderUploads_(orderId, uploads) {
+  const rootFolder = getOrCreateFolder_(AIV_SETTINGS.UPLOAD_FOLDER);
+  const orderFolder = rootFolder.createFolder(orderId);
+  const links = { sdms: '', payment: '' };
+
+  if (uploads.sdms && uploads.sdms.data) links.sdms = saveBase64File_(orderFolder, uploads.sdms, 'SDMS');
+  if (uploads.payment && uploads.payment.data) links.payment = saveBase64File_(orderFolder, uploads.payment, 'Payment');
+  return links;
+}
+
+function getOrCreateFolder_(name) {
+  const folders = DriveApp.getFoldersByName(name);
+  return folders.hasNext() ? folders.next() : DriveApp.createFolder(name);
+}
+
+function saveBase64File_(folder, upload, prefix) {
+  const mimeType = String(upload.mimeType || 'application/octet-stream');
+  const allowed = ['image/jpeg', 'image/png', 'application/pdf'];
+  if (allowed.indexOf(mimeType) < 0) throw new Error('Only JPG, PNG or PDF uploads are accepted.');
+  const bytes = Utilities.base64Decode(String(upload.data || ''));
+  if (bytes.length > 5 * 1024 * 1024) throw new Error('Each uploaded file must be 5 MB or smaller.');
+  const cleanName = String(upload.name || 'upload').replace(/[^A-Za-z0-9._-]+/g, '-');
+  const file = folder.createFile(Utilities.newBlob(bytes, mimeType, `${prefix}-${cleanName}`));
+  return file.getUrl();
+}
+
 function sendNotification_(orderId, payload, items, totalPayable) {
   const customer = payload.customer || {};
   const itemLines = items.map((item) =>
@@ -509,9 +557,10 @@ function sendNotification_(orderId, payload, items, totalPayable) {
     `Phone: ${customer.phone}`,
     `Email: ${customer.email}`,
     `GSTIN: ${customer.gstin}`,
+    `SDMS Portal Number: ${customer.sdmsPortalNumber}`,
     `Delivery address: ${customer.deliveryAddress}, ${customer.state} - ${customer.pincode}`,
     '',
-    'Status: Payment pending.'
+    'Status: Payment proof submitted.'
   ].join('\n');
 
   MailApp.sendEmail({

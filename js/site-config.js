@@ -25,14 +25,15 @@ window.AIV_CONFIG = {
 
   data: {
     productsEndpoint: "https://script.google.com/macros/s/AKfycbw_TQXKdmVgiSev223VZPgTy8uvvXLEzWtxBpzxzJ_49ndADbRb_Zm_hiYyYtM5ue39/exec",
-    productsTimeoutMs: 15000
+    productsTimeoutMs: 10000,
+    browserCacheMs: 1800000
   },
 
   order: {
     currency: "INR",
     gstinRequired: true,
     endpoint: "https://script.google.com/macros/s/AKfycbw_TQXKdmVgiSev223VZPgTy8uvvXLEzWtxBpzxzJ_49ndADbRb_Zm_hiYyYtM5ue39/exec",
-    responseTimeoutMs: 25000
+    responseTimeoutMs: 60000
   },
 
   payment: {
@@ -41,7 +42,7 @@ window.AIV_CONFIG = {
     accountNumber: "50200121908336",
     ifsc: "HDFC0000262",
     branch: "Sangrur",
-    instructions: "After confirming the order, use the generated AIV Order Reference in your bank-transfer remarks. The order will be processed after payment verification."
+    instructions: "Transfer the displayed total to the AIV bank account and upload the payment screenshot below. Your AIV Order Reference will be generated after the order is recorded."
   },
 
   /*

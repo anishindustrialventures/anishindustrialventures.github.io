@@ -51,27 +51,21 @@
       priceContainer.innerHTML = `<strong>Price on request</strong><small>Contact AIV for pricing and ordering details.</small>`;
     }
 
-    const quantityHeading = document.querySelector("[data-quantity-heading]");
-    const quantityText = document.querySelector("[data-quantity-text]");
-    const packs = document.querySelector("[data-pack-list]");
-
-    if (product.bundleQuantity > 0) {
-      const bundlePrice = product.bundleQuantity * product.priceInclGst;
-      quantityHeading.textContent = `Order in multiples of ${product.bundleQuantity}.`;
-      quantityText.textContent = `Minimum order quantity is ${product.minimumQuantity} ${helpers.unitLabel(product, product.minimumQuantity)}.`;
-      packs.innerHTML = `
-        <article class="pack-card">
-          <span class="pack-card__count">${product.bundleQuantity}</span>
-          <div>
-            <h3>${helpers.escapeHtml(product.bundleQuantity)} ${helpers.escapeHtml(helpers.unitLabel(product, product.bundleQuantity))} per bundle</h3>
-            <p>${product.priceInclGst > 0 ? `${helpers.formatMoney(bundlePrice)} per bundle` : "Price on request"}${product.shippingIncluded ? " · shipping included" : ""}</p>
-          </div>
-        </article>`;
-    } else {
-      quantityHeading.textContent = "Ordering details available on request.";
-      quantityText.textContent = "Contact AIV for the minimum quantity and pack configuration.";
-      packs.innerHTML = "";
-    }
+    const bundlePrice = product.bundleQuantity > 0 && product.priceInclGst > 0
+      ? product.bundleQuantity * product.priceInclGst
+      : 0;
+    const overviewRows = [
+      ["[data-order-multiple-wrap]", "[data-order-multiple]", product.bundleQuantity > 0 ? `${product.bundleQuantity} ${helpers.unitLabel(product, product.bundleQuantity)}` : ""],
+      ["[data-minimum-order-wrap]", "[data-minimum-order]", product.minimumQuantity > 0 ? `${product.minimumQuantity} ${helpers.unitLabel(product, product.minimumQuantity)}` : ""],
+      ["[data-bundle-price-wrap]", "[data-bundle-price]", bundlePrice > 0 ? helpers.formatMoney(bundlePrice) : ""],
+      ["[data-shipping-wrap]", "[data-product-shipping]", product.shippingIncluded ? "Included" : "As applicable"]
+    ];
+    overviewRows.forEach(([wrapSelector, valueSelector, value]) => {
+      const wrap = document.querySelector(wrapSelector);
+      const valueElement = document.querySelector(valueSelector);
+      if (wrap) wrap.hidden = !value;
+      if (valueElement && value) valueElement.textContent = value;
+    });
 
     const specs = document.querySelector("[data-specifications]");
     specs.innerHTML = "";

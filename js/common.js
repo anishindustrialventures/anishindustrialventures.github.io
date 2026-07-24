@@ -149,48 +149,81 @@
 
   function loadProductsFromSheet() {
     const endpoint = String(config.data?.productsEndpoint || "").trim();
+    const cacheKey = "aiv.products.v2";
+    const cacheTtlMs = Number(config.data?.browserCacheMs || 30 * 60 * 1000);
+
+    function readBrowserCache() {
+      try {
+        const cached = JSON.parse(localStorage.getItem(cacheKey) || "null");
+        if (!cached || !Array.isArray(cached.products) || !cached.products.length) return null;
+        return cached;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    function applyProducts(products, usingFallback) {
+      if (!Array.isArray(products) || !products.length) return;
+      window.AIV.products = products.map(normaliseProduct)
+        .filter((product) => product.active)
+        .sort((a, b) => a.displayOrder - b.displayOrder);
+      window.AIV.usingFallbackProducts = usingFallback;
+    }
+
+    function saveBrowserCache(products, updatedAt) {
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({ products, updatedAt, savedAt: Date.now() }));
+      } catch (_) {
+        // Storage may be unavailable; the website can continue without it.
+      }
+    }
+
+    const cached = readBrowserCache();
+    if (cached) applyProducts(cached.products, false);
     if (!endpoint) return Promise.resolve(window.AIV.products);
 
-    return new Promise((resolve) => {
+    const fetchFresh = () => new Promise((resolve) => {
       const callbackName = `__aivProducts_${Date.now()}_${Math.random().toString(36).slice(2)}`;
       const script = document.createElement("script");
       let completed = false;
 
-      const finish = (products, usingFallback) => {
+      const finish = (products, usingFallback, updatedAt) => {
         if (completed) return;
         completed = true;
         window.clearTimeout(timeout);
         delete window[callbackName];
         script.remove();
         if (Array.isArray(products) && products.length) {
-          window.AIV.products = products.map(normaliseProduct)
-            .filter((product) => product.active)
-            .sort((a, b) => a.displayOrder - b.displayOrder);
-          window.AIV.usingFallbackProducts = usingFallback;
+          applyProducts(products, usingFallback);
+          if (!usingFallback) saveBrowserCache(products, updatedAt || new Date().toISOString());
         }
         resolve(window.AIV.products);
       };
 
       window[callbackName] = (response) => {
         if (response?.ok && Array.isArray(response.products) && response.products.length) {
-          finish(response.products, false);
+          finish(response.products, false, response.updatedAt);
         } else {
-          console.warn("AIV product service returned no active products. Using local product data.");
-          finish(window.AIV.products, true);
+          finish(cached?.products || window.AIV.products, !cached);
         }
       };
 
       const timeout = window.setTimeout(() => {
-        console.warn("AIV product service timed out. Using local product data.");
-        finish(window.AIV.products, true);
-      }, config.data?.productsTimeoutMs || 15000);
+        finish(cached?.products || window.AIV.products, !cached);
+      }, config.data?.productsTimeoutMs || 10000);
 
       const separator = endpoint.includes("?") ? "&" : "?";
       script.src = `${endpoint}${separator}action=products&callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
       script.async = true;
-      script.onerror = () => finish(window.AIV.products, true);
+      script.onerror = () => finish(cached?.products || window.AIV.products, !cached);
       document.head.appendChild(script);
     });
+
+    if (cached && Date.now() - Number(cached.savedAt || 0) < cacheTtlMs) {
+      fetchFresh(); // stale-while-revalidate: page renders from cache immediately.
+      return Promise.resolve(window.AIV.products);
+    }
+    return fetchFresh();
   }
 
   window.AIV.productsReady = loadProductsFromSheet();

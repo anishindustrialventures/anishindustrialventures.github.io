@@ -63,7 +63,8 @@
                 <div class="field field--full"><label for="billing-address">Billing address <span>*</span></label><textarea id="billing-address" name="billingAddress" autocomplete="billing street-address" required maxlength="500"></textarea></div>
                 <div class="field field--full"><label for="delivery-address">Delivery address <span>*</span></label><textarea id="delivery-address" name="deliveryAddress" autocomplete="shipping street-address" required maxlength="500"></textarea></div>
                 <div class="field"><label for="pincode">Delivery PIN code <span>*</span></label><input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6"></div>
-                <div class="field"><label for="purchase-order">Purchase order reference</label><input id="purchase-order" name="purchaseOrderReference" maxlength="100"></div>
+                <div class="field"><label for="sdms-portal-number">SDMS Portal Number <span>*</span></label><input id="sdms-portal-number" name="sdmsPortalNumber" required maxlength="100"></div>
+                <div class="field"><label for="sdms-screenshot">SDMS portal screenshot</label><input id="sdms-screenshot" name="sdmsScreenshot" type="file" accept="image/png,image/jpeg,application/pdf"><small>Optional. JPG, PNG or PDF; maximum 5 MB.</small></div>
                 <div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" name="notes" maxlength="600" placeholder="Delivery or invoicing instructions"></textarea></div>
               </div>
               <div class="status-message" data-customer-status role="alert" aria-live="polite" hidden></div>
@@ -94,6 +95,11 @@
             </div>
 
             <form id="confirmation-form" novalidate>
+              <div class="field upload-field upload-field--required">
+                <label for="payment-screenshot">Payment screenshot <span>*</span></label>
+                <input id="payment-screenshot" name="paymentScreenshot" type="file" accept="image/png,image/jpeg,application/pdf" required>
+                <small>Mandatory. Upload the bank-transfer screenshot or payment receipt (JPG, PNG or PDF; maximum 5 MB).</small>
+              </div>
               <label class="checkbox-field confirm-checkbox"><input type="checkbox" name="orderConsent" required><span>I have reviewed the selected products, bank details and total payable. I confirm that AIV may record this order for processing.</span></label>
               <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-confirm-order>Confirm order and generate reference</button><button class="button button--outline" type="button" data-edit-order>Edit details</button></div>
             </form>
@@ -102,7 +108,7 @@
             <div class="success-panel" data-success-panel hidden>
               <h3>Order recorded successfully</h3>
               <p>Your AIV Order Reference is <strong data-success-order-id></strong>.</p>
-              <p>Total payable: <strong data-success-total></strong>. Use the Order Reference in your bank-transfer remarks. AIV will process the order after payment verification.</p>
+              <p>Total payable: <strong data-success-total></strong>. AIV will verify the uploaded payment proof and process the order.</p>
               <a class="button button--outline" href="#" target="_blank" rel="noopener noreferrer" data-success-whatsapp>Share order on WhatsApp</a>
             </div>
           </section>
@@ -127,7 +133,8 @@
       <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p><p class="footer-legal">Proprietor: <span data-proprietor-name>Sunita Gupta</span></p></div>
       <div class="footer-column"><h3>Quick links</h3><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></div>
       <div class="footer-column"><h3>Business registration</h3><span>GSTIN: <strong data-gstin>03AGRPG5512C1ZV</strong></span><span>Udyam: <strong data-udyam>UDYAM-PB-19-0073269</strong></span><span>Regular proprietorship</span></div>
-      <div class="footer-column"><h3>Contact us</h3><div class="footer-contact-row"><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><span data-address></span></div></div>
+      <div class="footer-column footer-column--contact"><h3>Contact us</h3><div class="footer-contact-row"><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><span data-address></span></div></div>
+      <div class="footer-column footer-column--bank"><h3>Bank details</h3><span>Account: <strong>50200121908336</strong></span><span>Bank: <strong>HDFC Bank</strong></span><span>IFSC: <strong>HDFC0000262</strong></span><span>Branch: <strong>Sangrur</strong></span></div>
       <div class="footer-column"><h3>WhatsApp</h3><a class="whatsapp-icon" href="#" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
     </div>
     <div class="container footer-bottom">© <span data-year></span> <span data-company-name>Anish Industrial Ventures</span>. All rights reserved.</div>

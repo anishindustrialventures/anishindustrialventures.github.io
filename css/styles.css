@@ -2616,28 +2616,248 @@ li,
   }
 }
 
+/* AIV final audited overrides */
 
-/* AIV revision: responsive product title, compact overview, footer and uploads */
-@media (min-width: 1100px) {
-  .product-hero__content h1 { white-space: nowrap; font-size: clamp(2.7rem, 4.1vw, 4.75rem); letter-spacing: -0.045em; }
-  .product-hero__grid { grid-template-columns: minmax(0, 1.28fr) minmax(360px, .72fr); }
+/* Product detail page */
+.product-code-row--stacked {
+  display: grid;
+  gap: 0;
+  margin-top: 1.25rem;
+  border-top: 1px solid rgba(6, 27, 52, 0.1);
 }
-.product-code-row--stacked { display: grid; gap: .35rem; margin-top: 1.25rem; }
-.product-code-row--stacked > span { display: flex; justify-content: space-between; gap: 1rem; padding: .65rem .8rem; border-bottom: 1px solid rgba(6,27,52,.1); }
-.product-code-row--stacked > span b { color: var(--navy); }
-.upload-field { margin: 1.25rem 0; padding: 1rem; border: 1px solid rgba(6,27,52,.14); border-radius: 14px; background: #f8fafc; }
-.upload-field input[type="file"], .field input[type="file"] { width: 100%; padding: .75rem; border: 1px dashed rgba(6,27,52,.28); border-radius: 10px; background: #fff; }
-.footer-grid--business { grid-template-columns: minmax(190px,1.2fr) minmax(120px,.65fr) minmax(185px,1fr) minmax(245px,1.35fr) minmax(190px,1fr) 70px; gap: 2rem; align-items: start; }
-.footer-column, .footer-contact-row { min-width: 0; }
-.footer-column--contact a, .footer-column--contact span { overflow-wrap: anywhere; word-break: normal; white-space: normal; }
-.footer-column--contact { min-width: 245px; }
-.footer-column--bank strong { display: inline; }
-@media (max-width: 1180px) {
-  .footer-grid--business { grid-template-columns: repeat(3, minmax(0,1fr)); }
-  .footer-column--contact { min-width: 0; }
+
+.product-code-row--stacked > span {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.75fr) minmax(0, 1.25fr);
+  gap: 1rem;
+  align-items: start;
+  padding: 0.72rem 0;
+  border: 0;
+  border-bottom: 1px solid rgba(6, 27, 52, 0.1);
+  border-radius: 0;
+  background: transparent;
+  font-size: 0.88rem;
 }
-@media (max-width: 760px) {
-  .footer-grid--business { grid-template-columns: 1fr; }
-  .product-hero__content h1 { white-space: normal; }
-  .product-code-row--stacked > span { flex-direction: column; gap: .15rem; }
+
+.product-code-row--stacked > span b {
+  color: var(--navy-900);
+}
+
+.product-code-row--stacked > span > span {
+  min-width: 0;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 1180px) {
+  .product-hero__grid {
+    grid-template-columns: minmax(0, 1.58fr) minmax(310px, 0.42fr);
+    gap: 44px;
+  }
+
+  .product-hero__content h1 {
+    max-width: none;
+    white-space: nowrap;
+    font-size: clamp(2.75rem, 3.75vw, 3.2rem);
+    letter-spacing: -0.04em;
+  }
+}
+
+/* File uploads */
+.upload-field {
+  display: grid;
+  gap: 0.55rem;
+  margin: 1.25rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(6, 27, 52, 0.14);
+  border-radius: 14px;
+  background: #f8fafc;
+}
+
+.upload-field label {
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.upload-field label span,
+.field label span {
+  color: var(--error);
+}
+
+.upload-field small,
+.field small {
+  color: var(--muted);
+}
+
+.upload-field input[type="file"],
+.field input[type="file"] {
+  width: 100%;
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px dashed rgba(6, 27, 52, 0.28);
+  border-radius: 10px;
+  background: #fff;
+}
+
+/* Independent order quantity rows */
+.order-product-row {
+  isolation: isolate;
+}
+
+.order-product-row .quantity-control {
+  flex: 0 0 auto;
+}
+
+.order-product-row .quantity-control button {
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.order-product-row .quantity-control input {
+  min-width: 54px;
+}
+
+/* Footer: three balanced columns prevent contact details from collapsing. */
+.footer-grid--business {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(175px, 0.75fr) minmax(260px, 1.2fr);
+  gap: 40px 48px;
+  align-items: start;
+  padding: 54px 0 38px;
+}
+
+.footer-grid--business > * {
+  min-width: 0;
+}
+
+.footer-brand img {
+  width: min(240px, 100%);
+  height: auto;
+}
+
+.footer-column {
+  min-width: 0;
+}
+
+.footer-column h3 {
+  margin-bottom: 14px;
+}
+
+.footer-column a,
+.footer-column span {
+  max-width: 100%;
+  word-break: normal;
+}
+
+.footer-column--registration strong,
+.footer-column--bank strong {
+  display: inline;
+  color: var(--white);
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.footer-column--bank > span {
+  margin: 7px 0;
+}
+
+.footer-column--bank strong,
+.footer-column--contact [data-phone] {
+  white-space: nowrap;
+}
+
+.footer-column--contact {
+  min-width: 0;
+}
+
+.footer-contact-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  margin: 8px 0;
+}
+
+.footer-contact-row > a,
+.footer-contact-row > span {
+  min-width: 0;
+  margin: 0;
+}
+
+.footer-contact-label {
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 0.76rem !important;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.footer-column--contact [data-email] {
+  overflow-wrap: anywhere;
+}
+
+.footer-contact-row--address [data-address] {
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.footer-column--whatsapp {
+  justify-self: start;
+}
+
+@media (max-width: 980px) {
+  .footer-grid--business {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 34px 42px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-grid--business {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 42px;
+  }
+
+  .footer-contact-row {
+    grid-template-columns: 58px minmax(0, 1fr);
+  }
+
+  .product-code-row--stacked > span {
+    grid-template-columns: 1fr;
+    gap: 0.2rem;
+  }
+
+  .product-hero__content h1 {
+    white-space: normal;
+  }
+}
+
+/* Prevent intrinsic image widths from expanding mobile grid tracks. */
+body {
+  overflow-x: hidden;
+}
+
+.about-grid > *,
+.value-grid > *,
+.product-grid > *,
+.product-details-grid > *,
+.order-layout > * {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  #about .about-media,
+  #about .about-content,
+  #about .value-grid,
+  #about .value-item {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  #about .about-media img {
+    width: 100%;
+    height: auto;
+  }
 }

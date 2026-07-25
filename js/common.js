@@ -9,7 +9,7 @@
 
   const moneyFormatter = new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: config.order.currency || "INR",
+    currency: config.order?.currency || "INR",
     maximumFractionDigits: 2
   });
 
@@ -53,13 +53,15 @@
         return `https://drive.google.com/uc?export=view&id=${parsed.searchParams.get("id")}`;
       }
     } catch (_) {
-      // A relative GitHub asset path is valid and does not need URL parsing.
+      // Relative asset paths are valid.
     }
     return value;
   }
 
   function normaliseSpecifications(value) {
-    if (Array.isArray(value)) return value.map(String).map((item) => item.trim()).filter(Boolean);
+    if (Array.isArray(value)) {
+      return value.map(String).map((item) => item.trim()).filter(Boolean);
+    }
     return String(value || "")
       .split(/\r?\n|\|/)
       .map((item) => item.trim())
@@ -68,6 +70,7 @@
 
   function normaliseProduct(raw, index = 0) {
     const productCode = String(raw.productCode ?? raw["Product Code"] ?? "").trim();
+    const sapCode = String(raw.sapCode ?? raw["SAP Code"] ?? "").trim();
     const name = String(raw.name ?? raw.productName ?? raw["Product Name"] ?? "Product").trim();
     const bundleQuantity = toNumber(raw.bundleQuantity ?? raw["Bundle Quantity"]);
     const minimumQuantity = toNumber(raw.minimumQuantity ?? raw["Minimum Quantity"]);
@@ -75,9 +78,9 @@
     const orderEnabledValue = raw.orderEnabled ?? raw["Order Enabled"];
 
     const product = {
-      id: slugify(raw.id || productCode || name),
+      sourceIndex: index,
       productCode,
-      sapCode: String(raw.sapCode ?? raw["SAP Code"] ?? "").trim(),
+      sapCode,
       name,
       image: normaliseImageUrl(raw.image ?? raw.productPhotoUrl ?? raw["Product Photo URL"]),
       summary: String(raw.summary ?? raw.shortDescription ?? raw["Short Description"] ?? "").trim(),
@@ -102,6 +105,7 @@
     product.minimumBundles = product.bundleQuantity > 0
       ? Math.max(1, Math.ceil(product.minimumQuantity / product.bundleQuantity))
       : 0;
+
     product.orderEnabled = Boolean(
       product.orderEnabled &&
       product.active &&
@@ -110,7 +114,34 @@
       product.bundleQuantity > 0 &&
       product.minimumQuantity > 0
     );
+
     return product;
+  }
+
+  function prepareProducts(rawProducts) {
+    const idCounts = new Map();
+    const orderCodes = new Set();
+
+    return (Array.isArray(rawProducts) ? rawProducts : [])
+      .map(normaliseProduct)
+      .filter((product) => product.active && product.name)
+      .sort((a, b) => a.displayOrder - b.displayOrder || a.sourceIndex - b.sourceIndex)
+      .map((product, index) => {
+        const baseId = slugify(product.productCode || product.sapCode || product.name);
+        const occurrence = (idCounts.get(baseId) || 0) + 1;
+        idCounts.set(baseId, occurrence);
+        product.id = occurrence === 1 ? baseId : `${baseId}-${occurrence}`;
+        product.catalogKey = `${product.id}::${index}`;
+
+        const orderCode = product.productCode.toUpperCase();
+        if (product.orderEnabled && orderCodes.has(orderCode)) {
+          console.warn(`Duplicate product code ${product.productCode}; duplicate row disabled for online ordering.`);
+          product.orderEnabled = false;
+        } else if (product.orderEnabled) {
+          orderCodes.add(orderCode);
+        }
+        return product;
+      });
   }
 
   const helpers = {
@@ -124,33 +155,44 @@
     },
     findProduct(identifier) {
       const key = String(identifier || "").trim().toLowerCase();
+      if (!key) return undefined;
       return window.AIV.products.find((product) =>
-        product.id.toLowerCase() === key || product.productCode.toLowerCase() === key
+        product.id.toLowerCase() === key ||
+        product.productCode.toLowerCase() === key ||
+        product.sapCode.toLowerCase() === key
       );
     },
     whatsappUrl(message) {
       const number = String(config.contact.whatsappNumber || "").replace(/\D/g, "");
-      if (!number) return "";
+      if (!number) return "#";
       return `https://wa.me/${number}?text=${encodeURIComponent(message || config.contact.defaultWhatsappMessage)}`;
     },
     unitLabel(product, quantity = 1) {
       const unit = product.unit || "unit";
-      return quantity === 1 ? unit : `${unit}s`;
+      if (quantity === 1) return unit;
+      if (/s$/i.test(unit)) return unit;
+      return `${unit}s`;
     }
   };
 
   window.AIV = {
     config,
     helpers,
-    products: (config.fallbackProducts || []).map(normaliseProduct),
+    products: prepareProducts(config.fallbackProducts || []),
     usingFallbackProducts: true,
     productsReady: null
   };
 
   function loadProductsFromSheet() {
     const endpoint = String(config.data?.productsEndpoint || "").trim();
-    const cacheKey = "aiv.products.v2";
+    const cacheKey = "aiv.products.v5";
     const cacheTtlMs = Number(config.data?.browserCacheMs || 30 * 60 * 1000);
+
+    try {
+      ["aiv.products.v2", "aiv.products.v3", "aiv.products.v4"].forEach((key) => localStorage.removeItem(key));
+    } catch (_) {
+      // Ignore unavailable storage.
+    }
 
     function readBrowserCache() {
       try {
@@ -162,19 +204,22 @@
       }
     }
 
-    function applyProducts(products, usingFallback) {
-      if (!Array.isArray(products) || !products.length) return;
-      window.AIV.products = products.map(normaliseProduct)
-        .filter((product) => product.active)
-        .sort((a, b) => a.displayOrder - b.displayOrder);
+    function applyProducts(products, usingFallback, emitUpdate = false) {
+      const prepared = prepareProducts(products);
+      if (!prepared.length) return false;
+      window.AIV.products = prepared;
       window.AIV.usingFallbackProducts = usingFallback;
+      if (emitUpdate) {
+        window.dispatchEvent(new CustomEvent("aiv:products-updated", { detail: { products: prepared } }));
+      }
+      return true;
     }
 
     function saveBrowserCache(products, updatedAt) {
       try {
         localStorage.setItem(cacheKey, JSON.stringify({ products, updatedAt, savedAt: Date.now() }));
       } catch (_) {
-        // Storage may be unavailable; the website can continue without it.
+        // Continue without local cache.
       }
     }
 
@@ -190,12 +235,13 @@
       const finish = (products, usingFallback, updatedAt) => {
         if (completed) return;
         completed = true;
-        window.clearTimeout(timeout);
+        window.clearTimeout(timeoutId);
         delete window[callbackName];
         script.remove();
+
         if (Array.isArray(products) && products.length) {
-          applyProducts(products, usingFallback);
-          if (!usingFallback) saveBrowserCache(products, updatedAt || new Date().toISOString());
+          const changed = applyProducts(products, usingFallback, true);
+          if (changed && !usingFallback) saveBrowserCache(products, updatedAt || new Date().toISOString());
         }
         resolve(window.AIV.products);
       };
@@ -204,23 +250,23 @@
         if (response?.ok && Array.isArray(response.products) && response.products.length) {
           finish(response.products, false, response.updatedAt);
         } else {
-          finish(cached?.products || window.AIV.products, !cached);
+          finish(cached?.products || config.fallbackProducts || [], !cached);
         }
       };
 
-      const timeout = window.setTimeout(() => {
-        finish(cached?.products || window.AIV.products, !cached);
-      }, config.data?.productsTimeoutMs || 10000);
+      const timeoutId = window.setTimeout(() => {
+        finish(cached?.products || config.fallbackProducts || [], !cached);
+      }, Number(config.data?.productsTimeoutMs || 10000));
 
       const separator = endpoint.includes("?") ? "&" : "?";
       script.src = `${endpoint}${separator}action=products&callback=${encodeURIComponent(callbackName)}&_=${Date.now()}`;
       script.async = true;
-      script.onerror = () => finish(cached?.products || window.AIV.products, !cached);
+      script.onerror = () => finish(cached?.products || config.fallbackProducts || [], !cached);
       document.head.appendChild(script);
     });
 
     if (cached && Date.now() - Number(cached.savedAt || 0) < cacheTtlMs) {
-      fetchFresh(); // stale-while-revalidate: page renders from cache immediately.
+      fetchFresh();
       return Promise.resolve(window.AIV.products);
     }
     return fetchFresh();
@@ -246,6 +292,11 @@
     setText("[data-email]", config.contact.email);
     setText("[data-partner-label]", config.partner.label);
     setText("[data-year]", String(config.company.copyrightYear));
+    setText("[data-bank-account-name]", config.payment.accountName);
+    setText("[data-bank-name]", config.payment.bankName);
+    setText("[data-bank-account-number]", config.payment.accountNumber);
+    setText("[data-bank-ifsc]", config.payment.ifsc);
+    setText("[data-bank-branch]", config.payment.branch);
 
     document.querySelectorAll("[data-phone-link]").forEach((element) => {
       element.href = `tel:${config.contact.phoneHref.replace(/\s/g, "")}`;
@@ -312,39 +363,45 @@
     if (!container) return;
 
     await window.AIV.productsReady;
-    container.innerHTML = "";
-    const products = window.AIV.products.filter((product) => product.active);
 
-    if (!products.length) {
-      container.innerHTML = `<div class="empty-state"><h3>Products are being updated</h3><p>Please contact AIV on WhatsApp for current availability.</p></div>`;
-      return;
-    }
+    const render = () => {
+      container.innerHTML = "";
+      const products = window.AIV.products.filter((product) => product.active);
 
-    products.forEach((product) => {
-      const card = document.createElement("article");
-      card.className = "product-card product-card--featured";
-      const detailUrl = `product.html?product=${encodeURIComponent(product.id)}`;
-      const orderAction = product.orderEnabled
-        ? `<a class="button button--outline" href="order.html?product=${encodeURIComponent(product.id)}">Place order</a>`
-        : `<a class="button button--outline" href="${helpers.whatsappUrl(`Hi, I would like pricing and ordering details for ${product.name}.`)}" target="_blank" rel="noopener noreferrer">Enquire on WhatsApp</a>`;
+      if (!products.length) {
+        container.innerHTML = `<div class="empty-state"><h3>Products are being updated</h3><p>Please contact AIV on WhatsApp for current availability.</p></div>`;
+        return;
+      }
 
-      card.innerHTML = `
-        <a class="product-card__media" href="${detailUrl}" aria-label="View ${escapeHtml(product.name)}">
-          <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" width="776" height="548">
-        </a>
-        <div class="product-card__content">
-          <span class="eyebrow">${product.orderEnabled ? "Available to order" : "Product enquiry"}</span>
-          <h3><a href="${detailUrl}">${escapeHtml(product.name)}</a></h3>
-          ${productMeta(product)}
-          <p>${escapeHtml(product.summary)}</p>
-          ${productPriceMarkup(product)}
-          <div class="button-row">
-            <a class="button button--primary" href="${detailUrl}">View details <span aria-hidden="true">→</span></a>
-            ${orderAction}
-          </div>
-        </div>`;
-      container.appendChild(card);
-    });
+      products.forEach((product) => {
+        const card = document.createElement("article");
+        card.className = "product-card product-card--featured";
+        const detailUrl = `product.html?product=${encodeURIComponent(product.id)}`;
+        const orderAction = product.orderEnabled
+          ? `<a class="button button--outline" href="order.html?product=${encodeURIComponent(product.id)}">Place order</a>`
+          : `<a class="button button--outline" href="${helpers.whatsappUrl(`Hi, I would like pricing and ordering details for ${product.name}.`)}" target="_blank" rel="noopener noreferrer">Enquire on WhatsApp</a>`;
+
+        card.innerHTML = `
+          <a class="product-card__media" href="${detailUrl}" aria-label="View ${escapeHtml(product.name)}">
+            <img src="${escapeHtml(product.image)}" alt="${escapeHtml(product.name)}" loading="lazy" width="776" height="548">
+          </a>
+          <div class="product-card__content">
+            <span class="eyebrow">${product.orderEnabled ? "Available to order" : "Product enquiry"}</span>
+            <h3><a href="${detailUrl}">${escapeHtml(product.name)}</a></h3>
+            ${productMeta(product)}
+            <p>${escapeHtml(product.summary)}</p>
+            ${productPriceMarkup(product)}
+            <div class="button-row">
+              <a class="button button--primary" href="${detailUrl}">View details <span aria-hidden="true">→</span></a>
+              ${orderAction}
+            </div>
+          </div>`;
+        container.appendChild(card);
+      });
+    };
+
+    render();
+    window.addEventListener("aiv:products-updated", render, { once: true });
   }
 
   function initialiseHeaderState() {

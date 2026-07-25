@@ -1,143 +1,165 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Place a product order with Anish Industrial Ventures.">
-  <meta name="theme-color" content="#061B34">
-  <title>Place Order | AIV</title>
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="css/styles.css">
-  <script src="js/site-config.js" defer></script>
-  <script src="js/common.js" defer></script>
-  <script src="js/order.js" defer></script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="Place a product order with Anish Industrial Ventures." name="description"/>
+<meta content="#061B34" name="theme-color"/>
+<title>Place Order | AIV</title>
+<link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
+<link href="css/styles.css" rel="stylesheet"/>
+<script defer="" src="js/site-config.js"></script>
+<script defer="" src="js/common.js"></script>
+<script defer="" src="js/order.js"></script>
 </head>
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="index.html" aria-label="Anish Industrial Ventures home"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"></a>
-      <nav class="desktop-nav" aria-label="Primary navigation"><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></nav>
-      <a class="button button--primary header-cta" href="order.html" aria-current="page">Place order</a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-label="Open navigation" data-menu-toggle><span></span></button>
-    </div>
-    <nav class="mobile-menu" aria-label="Mobile navigation" data-mobile-menu><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a><a class="button button--primary" href="order.html">Place order</a></nav>
-  </header>
+<header class="site-header">
+<div class="container header-inner">
+<a aria-label="Anish Industrial Ventures home" class="logo" href="index.html"><img alt="Anish Industrial Ventures" height="92" src="assets/logo.svg" width="390"/></a>
+<nav aria-label="Primary navigation" class="desktop-nav"><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></nav>
+<a aria-current="page" class="button button--primary header-cta" href="order.html">Place order</a>
+<button aria-expanded="false" aria-label="Open navigation" class="menu-toggle" data-menu-toggle="" type="button"><span></span></button>
+</div>
+<nav aria-label="Mobile navigation" class="mobile-menu" data-mobile-menu=""><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a><a class="button button--primary" href="order.html">Place order</a></nav>
+</header>
+<main>
+<section class="page-hero page-hero--compact">
+<div class="container page-hero__inner">
+<div>
+<div class="breadcrumbs"><a href="index.html">Home</a><span>/</span><span>Place order</span></div>
+<span class="eyebrow">Official AIV order form</span>
+<h1>Select products and place your order.</h1>
+<p>Products, prices, GST, order multiples and minimum quantities are loaded directly from the official AIV product sheet.</p>
+</div>
+<div aria-label="Order summary" class="order-hero-facts">
+<div><span>Selected products</span><strong data-total-product-lines="">0</strong></div>
+<div><span>Total bundles</span><strong data-total-bundles="">0</strong></div>
+<div><span>Total units</span><strong data-total-units="">0</strong></div>
+<div><span>Order total</span><strong data-order-total="">₹0</strong></div>
+</div>
+</div>
+</section>
+<section class="section section--alt order-section">
+<div class="container order-layout">
+<div>
+<form class="order-panel" id="customer-form" novalidate="">
+<div class="form-section">
+<div class="form-section__title"><span>1</span><h2>Select products and quantity</h2></div>
+<p>Select the number of complete bundles required for each product. You may order more than one product in the same order.</p>
+<div class="order-products-list" data-order-products=""><p>Loading products…</p></div>
+</div>
+<div class="form-section">
+<div class="form-section__title"><span>2</span><h2>Customer and business details</h2></div>
+<div class="form-grid">
+<div class="field"><label for="business-name">Business / customer name <span>*</span></label><input autocomplete="organization" id="business-name" maxlength="120" name="businessName" required=""/></div>
+<div class="field"><label for="contact-person">Contact person <span>*</span></label><input autocomplete="name" id="contact-person" maxlength="100" name="contactPerson" required=""/></div>
+<div class="field"><label for="phone">Mobile number <span>*</span></label><input autocomplete="tel" id="phone" inputmode="numeric" maxlength="14" name="phone" placeholder="10-digit Indian mobile number" required=""/></div>
+<div class="field"><label for="email">Email address <span>*</span></label><input autocomplete="email" id="email" maxlength="160" name="email" required="" type="email"/></div>
+<div class="field"><label for="gstin">GSTIN <span>*</span></label><input autocomplete="off" id="gstin" maxlength="15" name="gstin" placeholder="15-character GSTIN" required="" style="text-transform:uppercase"/><small>Mandatory for GST invoicing.</small></div>
+<div class="field"><label for="state">State <span>*</span></label><input autocomplete="address-level1" id="state" maxlength="80" name="state" required=""/></div>
+<div class="field field--full"><label for="billing-address">Billing address <span>*</span></label><textarea autocomplete="billing street-address" id="billing-address" maxlength="500" name="billingAddress" required=""></textarea></div>
+<div class="field field--full"><label for="delivery-address">Delivery address <span>*</span></label><textarea autocomplete="shipping street-address" id="delivery-address" maxlength="500" name="deliveryAddress" required=""></textarea></div>
+<div class="field"><label for="pincode">Delivery PIN code <span>*</span></label><input id="pincode" inputmode="numeric" maxlength="6" name="pincode" pattern="[0-9]{6}" required=""/></div><div class="field"><label for="sdms-portal-number">SDMS Portal Number <span>*</span></label><input autocomplete="off" id="sdms-portal-number" maxlength="100" name="sdmsPortalNumber" placeholder="Enter SDMS portal number" required=""/></div><div class="field"><label for="sdms-screenshot">SDMS portal screenshot <small>(optional)</small></label><input accept="image/jpeg,image/png,application/pdf" id="sdms-screenshot" name="sdmsScreenshot" type="file"/><small>JPG, PNG or PDF, maximum 5 MB.</small></div>
 
-  <main>
-    <section class="page-hero page-hero--compact">
-      <div class="container page-hero__inner">
-        <div>
-          <div class="breadcrumbs"><a href="index.html">Home</a><span>/</span><span>Place order</span></div>
-          <span class="eyebrow">Official AIV order form</span>
-          <h1>Select products and place your order.</h1>
-          <p>Products, prices, GST, order multiples and minimum quantities are loaded directly from the official AIV product sheet.</p>
-        </div>
-        <div class="order-hero-facts" aria-label="Order summary">
-          <div><span>Selected products</span><strong data-total-product-lines>0</strong></div>
-          <div><span>Total bundles</span><strong data-total-bundles>0</strong></div>
-          <div><span>Total units</span><strong data-total-units>0</strong></div>
-          <div><span>Order total</span><strong data-order-total>₹0</strong></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section section--alt order-section">
-      <div class="container order-layout">
-        <div>
-          <form id="customer-form" class="order-panel" novalidate>
-            <div class="form-section">
-              <div class="form-section__title"><span>1</span><h2>Select products and quantity</h2></div>
-              <p>Select the number of complete bundles required for each product. You may order more than one product in the same order.</p>
-              <div class="order-products-list" data-order-products><p>Loading products…</p></div>
-            </div>
-
-            <div class="form-section">
-              <div class="form-section__title"><span>2</span><h2>Customer and business details</h2></div>
-              <div class="form-grid">
-                <div class="field"><label for="business-name">Business / customer name <span>*</span></label><input id="business-name" name="businessName" autocomplete="organization" required maxlength="120"></div>
-                <div class="field"><label for="contact-person">Contact person <span>*</span></label><input id="contact-person" name="contactPerson" autocomplete="name" required maxlength="100"></div>
-                <div class="field"><label for="phone">Mobile number <span>*</span></label><input id="phone" name="phone" inputmode="numeric" autocomplete="tel" placeholder="10-digit Indian mobile number" required maxlength="14"></div>
-                <div class="field"><label for="email">Email address <span>*</span></label><input id="email" name="email" type="email" autocomplete="email" required maxlength="160"></div>
-                <div class="field"><label for="gstin">GSTIN <span>*</span></label><input id="gstin" name="gstin" autocomplete="off" placeholder="15-character GSTIN" required maxlength="15" style="text-transform:uppercase"><small>Mandatory for GST invoicing.</small></div>
-                <div class="field"><label for="state">State <span>*</span></label><input id="state" name="state" autocomplete="address-level1" required maxlength="80"></div>
-                <div class="field field--full"><label for="billing-address">Billing address <span>*</span></label><textarea id="billing-address" name="billingAddress" autocomplete="billing street-address" required maxlength="500"></textarea></div>
-                <div class="field field--full"><label for="delivery-address">Delivery address <span>*</span></label><textarea id="delivery-address" name="deliveryAddress" autocomplete="shipping street-address" required maxlength="500"></textarea></div>
-                <div class="field"><label for="pincode">Delivery PIN code <span>*</span></label><input id="pincode" name="pincode" inputmode="numeric" pattern="[0-9]{6}" required maxlength="6"></div>
-                <div class="field"><label for="sdms-portal-number">SDMS Portal Number <span>*</span></label><input id="sdms-portal-number" name="sdmsPortalNumber" required maxlength="100"></div>
-                <div class="field"><label for="sdms-screenshot">SDMS portal screenshot</label><input id="sdms-screenshot" name="sdmsScreenshot" type="file" accept="image/png,image/jpeg,application/pdf"><small>Optional. JPG, PNG or PDF; maximum 5 MB.</small></div>
-                <div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" name="notes" maxlength="600" placeholder="Delivery or invoicing instructions"></textarea></div>
-              </div>
-              <div class="status-message" data-customer-status role="alert" aria-live="polite" hidden></div>
-              <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-next-review>Next: review and bank details <span aria-hidden="true">→</span></button></div>
-            </div>
-          </form>
-
-          <section class="order-panel payment-step" data-payment-step hidden>
-            <div class="form-section__title"><span>3</span><h2>Review and confirm order</h2></div>
-            <div class="review-box">
-              <div class="review-box__header"><span>Order reference</span><strong data-order-id>Generated after confirmation</strong></div>
-              <div data-review-items></div>
-              <div class="review-line"><span>Selected product lines</span><strong data-total-product-lines>0</strong></div>
-              <div class="review-line"><span>Total bundles</span><strong data-total-bundles>0</strong></div>
-              <div class="review-line"><span>Total units</span><strong data-total-units>0</strong></div>
-              <div class="review-line"><span>GST</span><strong>Included as shown per product</strong></div>
-              <div class="review-line"><span>Shipping</span><strong data-shipping-status>As applicable</strong></div>
-              <div class="review-line review-line--total"><span>Total payable</span><strong data-order-total>₹0</strong></div>
-            </div>
-
-            <p class="payment-instruction" data-payment-instructions></p>
-            <div class="bank-details bank-details--full">
-              <div class="bank-row"><span>Account name</span><strong data-bank-account-name>Anish Industrial Ventures</strong></div>
-              <div class="bank-row"><span>Bank name</span><strong data-bank-name>HDFC Bank</strong></div>
-              <div class="bank-row"><span>Account number</span><strong data-bank-account-number>50200121908336</strong></div>
-              <div class="bank-row"><span>IFSC</span><strong data-bank-ifsc>HDFC0000262</strong></div>
-              <div class="bank-row"><span>Branch</span><strong data-bank-branch>Sangrur</strong></div>
-            </div>
-
-            <form id="confirmation-form" novalidate>
-              <div class="field upload-field upload-field--required">
-                <label for="payment-screenshot">Payment screenshot <span>*</span></label>
-                <input id="payment-screenshot" name="paymentScreenshot" type="file" accept="image/png,image/jpeg,application/pdf" required>
-                <small>Mandatory. Upload the bank-transfer screenshot or payment receipt (JPG, PNG or PDF; maximum 5 MB).</small>
-              </div>
-              <label class="checkbox-field confirm-checkbox"><input type="checkbox" name="orderConsent" required><span>I have reviewed the selected products, bank details and total payable. I confirm that AIV may record this order for processing.</span></label>
-              <div class="button-row form-action-row"><button class="button button--primary" type="submit" data-confirm-order>Confirm order and generate reference</button><button class="button button--outline" type="button" data-edit-order>Edit details</button></div>
-            </form>
-
-            <div class="status-message" data-order-status role="alert" aria-live="polite" hidden></div>
-            <div class="success-panel" data-success-panel hidden>
-              <h3>Order recorded successfully</h3>
-              <p>Your AIV Order Reference is <strong data-success-order-id></strong>.</p>
-              <p>Total payable: <strong data-success-total></strong>. AIV will verify the uploaded payment proof and process the order.</p>
-              <a class="button button--outline" href="#" target="_blank" rel="noopener noreferrer" data-success-whatsapp>Share order on WhatsApp</a>
-            </div>
-          </section>
-        </div>
-
-        <aside class="order-summary-card">
-          <span class="eyebrow">Live order summary</span>
-          <h2>Your selection</h2>
-          <div class="summary-stat"><span>Products</span><strong data-total-product-lines>0</strong></div>
-          <div class="summary-stat"><span>Bundles</span><strong data-total-bundles>0</strong></div>
-          <div class="summary-stat"><span>Total units</span><strong data-total-units>0</strong></div>
-          <div class="summary-stat summary-stat--total"><span>Total</span><strong data-order-total>₹0</strong></div>
-          <p>GST and shipping are applied according to the official product details shown above.</p>
-        </aside>
-      </div>
-    </section>
-    <iframe id="aiv-order-target" name="aiv-order-target" title="Order submission response" hidden></iframe>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container footer-grid footer-grid--business">
-      <div class="footer-brand"><img src="assets/logo.svg" alt="Anish Industrial Ventures" width="390" height="92"><p data-tagline>Powering What’s Next.</p><p class="footer-legal">Proprietor: <span data-proprietor-name>Sunita Gupta</span></p></div>
-      <div class="footer-column"><h3>Quick links</h3><a href="index.html">Home</a><a href="index.html#about">About us</a><a href="index.html#products">Products</a><a href="index.html#why-aiv">Why choose us</a><a href="index.html#contact">Contact us</a></div>
-      <div class="footer-column"><h3>Business registration</h3><span>GSTIN: <strong data-gstin>03AGRPG5512C1ZV</strong></span><span>Udyam: <strong data-udyam>UDYAM-PB-19-0073269</strong></span><span>Regular proprietorship</span></div>
-      <div class="footer-column footer-column--contact"><h3>Contact us</h3><div class="footer-contact-row"><a data-phone-link data-phone>+91 73075 12016</a></div><div class="footer-contact-row"><a data-email-link data-email>anishindustrialventures@gmail.com</a></div><div class="footer-contact-row"><span data-address></span></div></div>
-      <div class="footer-column footer-column--bank"><h3>Bank details</h3><span>Account: <strong>50200121908336</strong></span><span>Bank: <strong>HDFC Bank</strong></span><span>IFSC: <strong>HDFC0000262</strong></span><span>Branch: <strong>Sangrur</strong></span></div>
-      <div class="footer-column"><h3>WhatsApp</h3><a class="whatsapp-icon" href="#" data-whatsapp-link aria-label="WhatsApp AIV"><svg viewBox="0 0 24 24" stroke-width="1.8"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8c1 3 3 5 6 6"/></svg></a></div>
-    </div>
-    <div class="container footer-bottom">© <span data-year></span> <span data-company-name>Anish Industrial Ventures</span>. All rights reserved.</div>
-  </footer>
+<div class="field field--full"><label for="notes">Order notes</label><textarea id="notes" maxlength="600" name="notes" placeholder="Delivery or invoicing instructions"></textarea></div>
+</div>
+<div aria-live="polite" class="status-message" data-customer-status="" hidden="" role="alert"></div>
+<div class="button-row form-action-row"><button class="button button--primary" data-next-review="" type="submit">Next: review and bank details <span aria-hidden="true">→</span></button></div>
+</div>
+</form>
+<section class="order-panel payment-step" data-payment-step="" hidden="">
+<div class="form-section__title"><span>3</span><h2>Review and confirm order</h2></div>
+<div class="review-box">
+<div class="review-box__header"><span>Order reference</span><strong data-order-id="">Generated after confirmation</strong></div>
+<div data-review-items=""></div>
+<div class="review-line"><span>Selected product lines</span><strong data-total-product-lines="">0</strong></div>
+<div class="review-line"><span>Total bundles</span><strong data-total-bundles="">0</strong></div>
+<div class="review-line"><span>Total units</span><strong data-total-units="">0</strong></div>
+<div class="review-line"><span>GST</span><strong>Included as shown per product</strong></div>
+<div class="review-line"><span>Shipping</span><strong data-shipping-status="">As applicable</strong></div>
+<div class="review-line review-line--total"><span>Total payable</span><strong data-order-total="">₹0</strong></div>
+</div>
+<p class="payment-instruction" data-payment-instructions=""></p>
+<div class="bank-details bank-details--full">
+<div class="bank-row"><span>Account name</span><strong data-bank-account-name="">Anish Industrial Ventures</strong></div>
+<div class="bank-row"><span>Bank name</span><strong data-bank-name="">HDFC Bank</strong></div>
+<div class="bank-row"><span>Account number</span><strong data-bank-account-number="">50200121908336</strong></div>
+<div class="bank-row"><span>IFSC</span><strong data-bank-ifsc="">HDFC0000262</strong></div>
+<div class="bank-row"><span>Branch</span><strong data-bank-branch="">Sangrur</strong></div>
+</div>
+<form id="confirmation-form" novalidate="">
+<div class="upload-field">
+<label for="payment-screenshot">Payment screenshot <span>*</span></label>
+<input accept="image/jpeg,image/png,application/pdf" id="payment-screenshot" name="paymentScreenshot" required="" type="file"/>
+<small>Upload the bank-transfer payment proof. JPG, PNG or PDF, maximum 5 MB.</small>
+</div><label class="checkbox-field confirm-checkbox"><input name="orderConsent" required="" type="checkbox"/><span>I have reviewed the selected products, bank details and total payable. I confirm that AIV may record this order for processing.</span></label>
+<div class="button-row form-action-row"><button class="button button--primary" data-confirm-order="" type="submit">Confirm order and generate reference</button><button class="button button--outline" data-edit-order="" type="button">Edit details</button></div>
+</form>
+<div aria-live="polite" class="status-message" data-order-status="" hidden="" role="alert"></div>
+<div class="success-panel" data-success-panel="" hidden="">
+<h3>Order recorded successfully</h3>
+<p>Your AIV Order Reference is <strong data-success-order-id=""></strong>.</p>
+<p>Total payable: <strong data-success-total=""></strong>. Use the Order Reference in your bank-transfer remarks. AIV will process the order after payment verification.</p>
+<a class="button button--outline" data-success-whatsapp="" href="#" rel="noopener noreferrer" target="_blank">Share order on WhatsApp</a>
+</div>
+</section>
+</div>
+<aside class="order-summary-card">
+<span class="eyebrow">Live order summary</span>
+<h2>Your selection</h2>
+<div class="summary-stat"><span>Products</span><strong data-total-product-lines="">0</strong></div>
+<div class="summary-stat"><span>Bundles</span><strong data-total-bundles="">0</strong></div>
+<div class="summary-stat"><span>Total units</span><strong data-total-units="">0</strong></div>
+<div class="summary-stat summary-stat--total"><span>Total</span><strong data-order-total="">₹0</strong></div>
+<p>GST and shipping are applied according to the official product details shown above.</p>
+</aside>
+</div>
+</section>
+<iframe hidden="" id="aiv-order-target" name="aiv-order-target" title="Order submission response"></iframe>
+</main>
+<footer class="site-footer">
+<div class="container footer-grid footer-grid--business">
+<div class="footer-brand">
+<img alt="Anish Industrial Ventures" height="92" src="assets/logo.svg" width="390"/>
+<p data-tagline="">Powering What’s Next.</p>
+<p class="footer-legal">Proprietor: <span data-proprietor-name="">Sunita Gupta</span></p>
+</div>
+<div class="footer-column footer-column--links">
+<h3>Quick links</h3>
+<a href="index.html">Home</a>
+<a href="index.html#about">About us</a>
+<a href="index.html#products">Products</a>
+<a href="index.html#why-aiv">Why choose us</a>
+<a href="index.html#contact">Contact us</a>
+</div>
+<div class="footer-column footer-column--registration">
+<h3>Business registration</h3>
+<span>GSTIN: <strong data-gstin="">03AGRPG5512C1ZV</strong></span>
+<span>Udyam: <strong data-udyam="">UDYAM-PB-19-0073269</strong></span>
+<span>Regular proprietorship</span>
+</div>
+<div class="footer-column footer-column--contact">
+<h3>Contact us</h3>
+<div class="footer-contact-row"><span class="footer-contact-label">Phone</span><a data-phone="" data-phone-link="">+91 73075 12016</a></div>
+<div class="footer-contact-row"><span class="footer-contact-label">Email</span><a data-email="" data-email-link="">anishindustrialventures@gmail.com</a></div>
+<div class="footer-contact-row footer-contact-row--address"><span class="footer-contact-label">Address</span><span data-address=""></span></div>
+</div>
+<div class="footer-column footer-column--bank">
+<h3>Bank details</h3>
+<span>Account: <strong data-bank-account-number="">50200121908336</strong></span>
+<span>Bank: <strong data-bank-name="">HDFC Bank</strong></span>
+<span>IFSC: <strong data-bank-ifsc="">HDFC0000262</strong></span>
+<span>Branch: <strong data-bank-branch="">Sangrur</strong></span>
+</div>
+<div class="footer-column footer-column--whatsapp">
+<h3>WhatsApp</h3>
+<a aria-label="WhatsApp AIV" class="whatsapp-icon" data-whatsapp-link="" href="#">
+<svg stroke-width="1.8" viewbox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"></path><path d="M9 8c1 3 3 5 6 6"></path></svg>
+</a>
+</div>
+</div>
+<div class="container footer-bottom">© <span data-year=""></span> <span data-company-name="">Anish Industrial Ventures</span>. All rights reserved.</div>
+</footer>
 </body>
 </html>

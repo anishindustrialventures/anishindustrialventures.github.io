@@ -134,8 +134,20 @@ function setupAivSheets() {
 }
 
 function refreshProductsCache() {
-  CacheService.getScriptCache().remove('aiv-products-v2');
+  const cache = CacheService.getScriptCache();
+  ['aiv-products-v2', 'aiv-products-v3', 'aiv-products-v4', 'aiv-products-v5'].forEach((key) => cache.remove(key));
   return 'Product cache cleared. The next website request will load fresh sheet data.';
+}
+
+function onEdit(e) {
+  try {
+    const sheet = e && e.range && e.range.getSheet();
+    if (sheet && sheet.getName() === AIV_SETTINGS.PRODUCTS_SHEET) {
+      refreshProductsCache();
+    }
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function doGet(e) {
@@ -143,7 +155,7 @@ function doGet(e) {
     const action = String(e && e.parameter && e.parameter.action || '').toLowerCase();
     if (action === 'products') {
       const cache = CacheService.getScriptCache();
-      const cacheKey = 'aiv-products-v2';
+      const cacheKey = 'aiv-products-v5';
       const cached = cache.get(cacheKey);
       let catalogue;
       if (cached) {
@@ -207,7 +219,7 @@ function doPost(e) {
     const productMap = {};
     products.forEach((product) => {
       const code = String(product['Product Code'] || '').trim().toUpperCase();
-      if (code) productMap[code] = product;
+      if (code && !productMap[code]) productMap[code] = product;
     });
 
     const authoritativeItems = validateAndPriceItems_(payload.items, productMap);
